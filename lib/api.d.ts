@@ -112,7 +112,7 @@ export declare class OpenSeaAPI {
      * @param apiPath Path to URL endpoint under API
      * @param query Data to send. Will be stringified using QueryString
      */
-    get(apiPath: string, query?: object): Promise<any>;
+    get(apiPath: string, query?: any): Promise<any>;
     /**
      * POST JSON data to API, sending auth token in headers
      * @param apiPath Path to URL endpoint under API

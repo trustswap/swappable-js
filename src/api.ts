@@ -304,7 +304,7 @@ export class OpenSeaAPI {
    * @param apiPath Path to URL endpoint under API
    * @param query Data to send. Will be stringified using QueryString
    */
-  public async get(apiPath: string, query: object = {}): Promise<any> {
+  public async get(apiPath: string, query: any = {}): Promise<any> {
 
     const qs = QueryString.stringify(query)
     const url = `${apiPath}?${qs}`
