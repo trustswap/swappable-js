@@ -54,6 +54,7 @@ import {
   DEFAULT_GAS_INCREASE_FACTOR,
   DEFAULT_MAX_BOUNTY,
   DEFAULT_SELLER_FEE_BASIS_POINTS,
+  DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP,
   DEFAULT_WRAPPED_NFT_LIQUIDATION_UNISWAP_SLIPPAGE_IN_BASIS_POINTS,
   INVERSE_BASIS_POINT, MAINNET_PROVIDER_URL,
   MIN_EXPIRATION_SECONDS, NULL_ADDRESS, NULL_BLOCK_HASH, OPENSEA_FEE_RECIPIENT,
@@ -72,7 +73,9 @@ import {
   WRAPPED_NFT_LIQUIDATION_PROXY_ADDRESS_MAINNET,
   WRAPPED_NFT_LIQUIDATION_PROXY_ADDRESS_RINKEBY,
   ENJIN_COIN_ADDRESS,
-  MANA_ADDRESS
+  MANA_ADDRESS,
+  SWAP_TOKEN_ADDRESS,
+  SWAP_TOKEN_RINKEBY_ADDRESS
 } from './constants'
 
 export class OpenSeaPort {
@@ -1574,16 +1577,19 @@ export class OpenSeaPort {
    * @param extraBountyBasisPoints The basis points to add for the bounty. Will throw if it exceeds the assets' contract's OpenSea fee.
    */
   public async computeFees(
-      { asset, side, accountAddress, isPrivate = false, extraBountyBasisPoints = 0 }:
+      { asset, side, accountAddress, isPrivate = false, extraBountyBasisPoints = 0, paymentTokenAddress}:
       { asset?: OpenSeaAsset;
         side: OrderSide;
         accountAddress?: string;
         isPrivate?: boolean;
-        extraBountyBasisPoints?: number }
+        extraBountyBasisPoints?: number;
+        paymentTokenAddress: string }
     ): Promise<ComputedFees> {
 
+    const isMainnet = this._networkName == Network.Main
+    const isPaymentInSwap = (isMainnet ? paymentTokenAddress == SWAP_TOKEN_ADDRESS : paymentTokenAddress == SWAP_TOKEN_RINKEBY_ADDRESS)
     let openseaBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
-    let openseaSellerFeeBasisPoints = DEFAULT_SELLER_FEE_BASIS_POINTS
+    let openseaSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
     let devBuyerFeeBasisPoints = 0
     let devSellerFeeBasisPoints = 0
     let transferFee = makeBigNumber(0)
@@ -1911,7 +1917,7 @@ export class OpenSeaPort {
     const {
       totalBuyerFeeBasisPoints,
       totalSellerFeeBasisPoints
-    } = await this.computeFees({ asset: openSeaAsset, extraBountyBasisPoints, side: OrderSide.Buy })
+    } = await this.computeFees({ asset: openSeaAsset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
 
     const {
       makerRelayerFee,
@@ -1990,7 +1996,7 @@ export class OpenSeaPort {
 
     const { totalSellerFeeBasisPoints,
             totalBuyerFeeBasisPoints,
-            sellerBountyBasisPoints } = await this.computeFees({ asset: openSeaAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints })
+            sellerBountyBasisPoints } = await this.computeFees({ asset: openSeaAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
 
     const { target, calldata, replacementPattern } = encodeSell(schema, wyAsset, accountAddress)
 
@@ -2152,7 +2158,7 @@ export class OpenSeaPort {
       ? await this.api.getAsset(assets[0])
       : undefined
     const { totalBuyerFeeBasisPoints,
-            totalSellerFeeBasisPoints } = await this.computeFees({ asset, extraBountyBasisPoints, side: OrderSide.Buy })
+            totalSellerFeeBasisPoints } = await this.computeFees({ asset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
 
     const {
       makerRelayerFee,
@@ -2239,7 +2245,7 @@ export class OpenSeaPort {
     const {
       totalSellerFeeBasisPoints,
       totalBuyerFeeBasisPoints,
-      sellerBountyBasisPoints } = await this.computeFees({ asset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints })
+      sellerBountyBasisPoints } = await this.computeFees({ asset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
 
     const { calldata, replacementPattern } = encodeAtomicizedSell(orderedSchemas, bundle.assets, accountAddress, this._wyvernProtocol, this._networkName)
 
