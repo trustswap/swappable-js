@@ -37,15 +37,16 @@ export async function requireOrdersCanMatch(
         { buy: Order, sell: Order, accountAddress: string }
 ) {
     const result = await client.wyvernExchange.ordersCanMatch_.callAsync(
-        [buy.exchange, buy.maker, buy.taker, buy.feeRecipient, buy.target, buy.staticTarget, buy.paymentToken, sell.exchange, sell.maker, sell.taker, sell.feeRecipient, sell.target, sell.staticTarget, sell.paymentToken],
-        [buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt],
-        [buy.feeMethod, buy.side, buy.saleKind, buy.howToCall, sell.feeMethod, sell.side, sell.saleKind, sell.howToCall],
-        buy.calldata,
-        sell.calldata,
-        buy.replacementPattern,
-        sell.replacementPattern,
-        buy.staticExtradata,
-        sell.staticExtradata,
+        [
+            buy.exchange, buy.maker, buy.taker, buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, 
+            buy.feeRecipient, buy.feeMethod, buy.side, buy.saleKind, buy.target, buy.howToCall, buy.calldata, buy.replacementPattern,
+            buy.staticTarget, buy.staticExtradata, buy.paymentToken, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt
+        ],
+        [
+            sell.exchange, sell.maker, sell.taker, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, 
+            sell.feeRecipient, sell.feeMethod, sell.side, sell.saleKind, sell.target, sell.howToCall, sell.calldata, sell.replacementPattern,
+            sell.staticTarget, sell.staticExtradata, sell.paymentToken, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt
+        ],
         {from: accountAddress},
     )
 
