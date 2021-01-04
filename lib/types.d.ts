@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import * as Web3 from 'web3';
 import { Network, HowToCall, ECSignature, Order as WyvernOrder } from 'wyvern-js/lib/types';
 import { Token } from 'wyvern-schemas/dist/types';
-export { Network, HowToCall, ECSignature };
+export { Network, HowToCall, ECSignature, WyvernOrder };
 /**
  * Events emitted by the SDK. There are five types:
  * 1. Transaction events, which tell you when a new transaction was
@@ -158,7 +158,7 @@ export interface WyvernBundle {
     description?: string;
     external_link?: string;
 }
-export declare type WyvernAtomicMatchParameters = [string[], BigNumber[], Array<(number | BigNumber)>, string, string, string, string, string, string, Array<(number | BigNumber)>, string[]];
+export declare type WyvernAtomicMatchParameters = [WyvernOrder, ECSignature, WyvernOrder, ECSignature, string];
 /**
  * The OpenSea account object appended to orders, providing extra metadata, profile images and usernames
  */

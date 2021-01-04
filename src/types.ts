@@ -13,7 +13,8 @@ import { Token } from 'wyvern-schemas/dist/types'
 export {
   Network,
   HowToCall,
-  ECSignature
+  ECSignature,
+  WyvernOrder
 }
 
 /**
@@ -200,10 +201,10 @@ export interface WyvernBundle {
 }
 
 export type WyvernAtomicMatchParameters = [
-      Array<(string | number | BigNumber)>, 
-      Array<(string | number | BigNumber)>, 
-      Array<(string | number | BigNumber)>, 
-      Array<(string | number | BigNumber)>, 
+      WyvernOrder, 
+      ECSignature, 
+      WyvernOrder, 
+      ECSignature, 
       string
 ]
 

@@ -1,4 +1,4 @@
-import { Order } from './types'
+import { Order, WyvernOrder } from './types'
 import { WyvernProtocol } from 'wyvern-js'
 import { NULL_ADDRESS } from './constants'
 
@@ -36,17 +36,61 @@ export async function requireOrdersCanMatch(
     {buy, sell, accountAddress}:
         { buy: Order, sell: Order, accountAddress: string }
 ) {
+    const buyOrder: WyvernOrder = {
+        exchange: buy.exchange,
+        maker: buy.maker,
+        taker: buy.taker,
+        makerRelayerFee: buy.makerRelayerFee,
+        takerRelayerFee: buy.takerRelayerFee,
+        makerProtocolFee: buy.makerProtocolFee,
+        takerProtocolFee: buy.takerProtocolFee,
+        feeRecipient: buy.feeRecipient,
+        feeMethod: buy.feeMethod,
+        side: buy.side,
+        saleKind: buy.saleKind,
+        target: buy.target,
+        howToCall: buy.howToCall,
+        calldata: buy.calldata,
+        replacementPattern: buy.replacementPattern,
+        staticTarget: buy.staticTarget,
+        staticExtradata: buy.staticExtradata,
+        paymentToken: buy.paymentToken,
+        basePrice: buy.basePrice,
+        extra: buy.extra,
+        listingTime: buy.listingTime,
+        expirationTime: buy.expirationTime,
+        salt: buy.salt
+      };
+  
+      const sellOrder: WyvernOrder = {
+        exchange: sell.exchange,
+        maker: sell.maker,
+        taker: sell.taker,
+        makerRelayerFee: sell.makerRelayerFee,
+        takerRelayerFee: sell.takerRelayerFee,
+        makerProtocolFee: sell.makerProtocolFee,
+        takerProtocolFee: sell.takerProtocolFee,
+        feeRecipient: sell.feeRecipient,
+        feeMethod: sell.feeMethod,
+        side: sell.side,
+        saleKind: sell.saleKind,
+        target: sell.target,
+        howToCall: sell.howToCall,
+        calldata: sell.calldata,
+        replacementPattern: sell.replacementPattern,
+        staticTarget: sell.staticTarget,
+        staticExtradata: sell.staticExtradata,
+        paymentToken: sell.paymentToken,
+        basePrice: sell.basePrice,
+        extra: sell.extra,
+        listingTime: sell.listingTime,
+        expirationTime: sell.expirationTime,
+        salt: sell.salt
+      };
+
     const result = await client.wyvernExchange.ordersCanMatch_.callAsync(
-        [
-            buy.exchange, buy.maker, buy.taker, buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, 
-            buy.feeRecipient, buy.feeMethod, buy.side, buy.saleKind, buy.target, buy.howToCall, buy.calldata, buy.replacementPattern,
-            buy.staticTarget, buy.staticExtradata, buy.paymentToken, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt
-        ],
-        [
-            sell.exchange, sell.maker, sell.taker, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, 
-            sell.feeRecipient, sell.feeMethod, sell.side, sell.saleKind, sell.target, sell.howToCall, sell.calldata, sell.replacementPattern,
-            sell.staticTarget, sell.staticExtradata, sell.paymentToken, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt
-        ],
+        buyOrder,
+        sellOrder,
         {from: accountAddress},
     )
 
