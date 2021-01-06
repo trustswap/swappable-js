@@ -13,8 +13,7 @@ import { Token } from 'wyvern-schemas/dist/types'
 export {
   Network,
   HowToCall,
-  ECSignature,
-  WyvernOrder
+  ECSignature
 }
 
 /**
@@ -201,11 +200,67 @@ export interface WyvernBundle {
 }
 
 export type WyvernAtomicMatchParameters = [
-      WyvernOrder, 
-      ECSignature, 
-      WyvernOrder, 
-      ECSignature, 
-      string
+   {
+    exchange: string;
+    maker: string;
+    taker: string;
+    makerRelayerFee: BigNumber;
+    takerRelayerFee: BigNumber;
+    makerProtocolFee: BigNumber;
+    takerProtocolFee: BigNumber;
+    feeRecipient: string;
+    feeMethod: number | BigNumber;
+    side: number | BigNumber;
+    saleKind: number | BigNumber;
+    target: string;
+    howToCall: number | BigNumber;
+    callData: string;
+    replacementPattern: string;
+    staticTarget: string;
+    staticExtradata: string;
+    paymentToken: string;
+    basePrice: BigNumber;
+    extra: BigNumber;
+    listingTime: BigNumber;
+    expirationTime: BigNumber;
+    salt: BigNumber;
+  }, 
+  {
+    v: number | BigNumber;
+    r: string;
+    s: string;
+  },
+  {
+    exchange: string;
+    maker: string;
+    taker: string;
+    makerRelayerFee: BigNumber;
+    takerRelayerFee: BigNumber;
+    makerProtocolFee: BigNumber;
+    takerProtocolFee: BigNumber;
+    feeRecipient: string;
+    feeMethod: number | BigNumber;
+    side: number | BigNumber;
+    saleKind: number | BigNumber;
+    target: string;
+    howToCall: number | BigNumber;
+    callData: string;
+    replacementPattern: string;
+    staticTarget: string;
+    staticExtradata: string;
+    paymentToken: string;
+    basePrice: BigNumber;
+    extra: BigNumber;
+    listingTime: BigNumber;
+    expirationTime: BigNumber;
+    salt: BigNumber;
+  },
+  {
+    v: number | BigNumber;
+    r: string;
+    s: string;
+  }, 
+  string
 ]
 
 /**

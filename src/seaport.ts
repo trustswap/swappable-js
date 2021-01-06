@@ -5,7 +5,7 @@ import { Schema } from 'wyvern-schemas/dist/types'
 import * as _ from 'lodash'
 import { OpenSeaAPI } from './api'
 import { CanonicalWETH, ERC20, ERC721, WrappedNFT, WrappedNFTFactory, WrappedNFTLiquidationProxy, UniswapFactory, UniswapExchange, StaticCheckTxOrigin, StaticCheckCheezeWizards, StaticCheckDecentralandEstates, CheezeWizardsBasicTournament, DecentralandEstates, getMethod } from './contracts'
-import { ECSignature, FeeMethod, HowToCall, Network, OpenSeaAPIConfig, OrderSide, SaleKind, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, OpenSeaAsset, WyvernSchemaName, WyvernAtomicMatchParameters, OpenSeaFungibleToken, WyvernAsset, ComputedFees, Asset, WyvernNFTAsset, WyvernFTAsset, TokenStandardVersion, WyvernOrder } from './types'
+import { ECSignature, FeeMethod, HowToCall, Network, OpenSeaAPIConfig, OrderSide, SaleKind, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, OpenSeaAsset, WyvernSchemaName, WyvernAtomicMatchParameters, OpenSeaFungibleToken, WyvernAsset, ComputedFees, Asset, WyvernNFTAsset, WyvernFTAsset, TokenStandardVersion } from './types'
 import {
   confirmTransaction,
   makeBigNumber, orderToJSON,
@@ -922,7 +922,7 @@ export class OpenSeaPort {
     this._dispatch(EventType.CancelOrder, { order, accountAddress })
 
     const gasPrice = await this._computeGasPrice()
-    const orderToCancel: WyvernOrder = {
+    const orderToCancel = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -936,7 +936,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -954,7 +954,7 @@ export class OpenSeaPort {
       s: order.s || NULL_BLOCK_HASH
     };
 
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder_.sendTransactionAsync(
+    const transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder.sendTransactionAsync(
       orderToCancel,
       orderToCancelSig,
       { from: accountAddress, gasPrice })
@@ -1244,7 +1244,7 @@ export class OpenSeaPort {
    */
   public async getCurrentPrice(order: Order) {
 
-    const orderToCalculateCurrentPrice: WyvernOrder = {
+    const orderToCalculateCurrentPrice = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -1258,7 +1258,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -1270,7 +1270,7 @@ export class OpenSeaPort {
       salt: order.salt
     };
 
-    const currentPrice = await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice_.callAsync(
+    const currentPrice = await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice.callAsync(
       orderToCalculateCurrentPrice
     )
     return currentPrice
@@ -1709,7 +1709,7 @@ export class OpenSeaPort {
    * @returns The order as stored by the orderbook
    */
   public async validateAndPostOrder(order: Order): Promise<Order> {
-    const orderToHash: WyvernOrder = {
+    const orderToHash = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -1723,7 +1723,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -1735,7 +1735,7 @@ export class OpenSeaPort {
       salt: order.salt
     };
 
-    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder_.callAsync(
+    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder.callAsync(
       orderToHash
       )
 
@@ -1793,7 +1793,7 @@ export class OpenSeaPort {
     }
 
     try {
-      const buyOrder: WyvernOrder = {
+      const buyOrder = {
         exchange: buy.exchange,
         maker: buy.maker,
         taker: buy.taker,
@@ -1807,7 +1807,7 @@ export class OpenSeaPort {
         saleKind: buy.saleKind,
         target: buy.target,
         howToCall: buy.howToCall,
-        calldata: buy.calldata,
+        callData: buy.calldata,
         replacementPattern: buy.replacementPattern,
         staticTarget: buy.staticTarget,
         staticExtradata: buy.staticExtradata,
@@ -1819,7 +1819,7 @@ export class OpenSeaPort {
         salt: buy.salt
       };
   
-      const sellOrder: WyvernOrder = {
+      const sellOrder = {
         exchange: sell.exchange,
         maker: sell.maker,
         taker: sell.taker,
@@ -1833,7 +1833,7 @@ export class OpenSeaPort {
         saleKind: sell.saleKind,
         target: sell.target,
         howToCall: sell.howToCall,
-        calldata: sell.calldata,
+        callData: sell.calldata,
         replacementPattern: sell.replacementPattern,
         staticTarget: sell.staticTarget,
         staticExtradata: sell.staticExtradata,
@@ -2590,7 +2590,7 @@ export class OpenSeaPort {
       await this.approveFungibleToken({ accountAddress, tokenAddress, minimumAmount })
     }
 
-    const sellOrder: WyvernOrder = {
+    const sellOrder = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -2604,7 +2604,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -2617,7 +2617,7 @@ export class OpenSeaPort {
     };
 
     // Check sell parameters
-    const sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters_.callAsync(
+    const sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters.callAsync(
       sellOrder,
       { from: accountAddress })
     if (!sellValid) {
@@ -2639,7 +2639,7 @@ export class OpenSeaPort {
 
     this._dispatch(EventType.ApproveOrder, { order, accountAddress })
 
-    const orderToApprove: WyvernOrder = {
+    const orderToApprove = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -2653,7 +2653,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -2665,7 +2665,7 @@ export class OpenSeaPort {
       salt: order.salt
     };
 
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder_.sendTransactionAsync(
+    const transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder.sendTransactionAsync(
       orderToApprove,
       includeInOrderBook,
       { from: accountAddress, gasPrice }
@@ -2681,7 +2681,7 @@ export class OpenSeaPort {
 
   public async _validateOrder(order: Order): Promise<boolean> {
 
-    const orderToValidate: WyvernOrder = {
+    const orderToValidate = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -2695,7 +2695,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -2713,7 +2713,12 @@ export class OpenSeaPort {
       s: order.s || NULL_BLOCK_HASH
     };
 
-    const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder_.callAsync(
+    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder.callAsync(
+      orderToValidate
+      )
+
+    const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder.callAsync(
+      hash,
       orderToValidate,
       orderToValidateSig
       )
@@ -2834,7 +2839,7 @@ export class OpenSeaPort {
       await this.approveFungibleToken({ accountAddress, tokenAddress, minimumAmount })
     }
 
-    const buyOrder: WyvernOrder = {
+    const buyOrder = {
       exchange: order.exchange,
       maker: order.maker,
       taker: order.taker,
@@ -2848,7 +2853,7 @@ export class OpenSeaPort {
       saleKind: order.saleKind,
       target: order.target,
       howToCall: order.howToCall,
-      calldata: order.calldata,
+      callData: order.calldata,
       replacementPattern: order.replacementPattern,
       staticTarget: order.staticTarget,
       staticExtradata: order.staticExtradata,
@@ -2861,7 +2866,7 @@ export class OpenSeaPort {
     };
 
     // Check order formation
-    const buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters_.callAsync(
+    const buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters.callAsync(
       buyOrder,
       { from: accountAddress })
     if (!buyValid) {
@@ -3140,7 +3145,7 @@ export class OpenSeaPort {
 
     let txHash
     const txnData: any = { from: accountAddress, value }
-    const buyOrder: WyvernOrder = {
+    const buyOrder = {
       exchange: buy.exchange,
       maker: buy.maker,
       taker: buy.taker,
@@ -3154,7 +3159,7 @@ export class OpenSeaPort {
       saleKind: buy.saleKind,
       target: buy.target,
       howToCall: buy.howToCall,
-      calldata: buy.calldata,
+      callData: buy.calldata,
       replacementPattern: buy.replacementPattern,
       staticTarget: buy.staticTarget,
       staticExtradata: buy.staticExtradata,
@@ -3166,7 +3171,7 @@ export class OpenSeaPort {
       salt: buy.salt
     };
 
-    const sellOrder: WyvernOrder = {
+    const sellOrder = {
       exchange: sell.exchange,
       maker: sell.maker,
       taker: sell.taker,
@@ -3180,7 +3185,7 @@ export class OpenSeaPort {
       saleKind: sell.saleKind,
       target: sell.target,
       howToCall: sell.howToCall,
-      calldata: sell.calldata,
+      callData: sell.calldata,
       replacementPattern: sell.replacementPattern,
       staticTarget: sell.staticTarget,
       staticExtradata: sell.staticExtradata,

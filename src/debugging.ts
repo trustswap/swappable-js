@@ -1,4 +1,4 @@
-import { Order, WyvernOrder } from './types'
+import { Order } from './types'
 import { WyvernProtocol } from 'wyvern-js'
 import { NULL_ADDRESS } from './constants'
 
@@ -36,7 +36,7 @@ export async function requireOrdersCanMatch(
     {buy, sell, accountAddress}:
         { buy: Order, sell: Order, accountAddress: string }
 ) {
-    const buyOrder: WyvernOrder = {
+    const buyOrder = {
         exchange: buy.exchange,
         maker: buy.maker,
         taker: buy.taker,
@@ -50,7 +50,7 @@ export async function requireOrdersCanMatch(
         saleKind: buy.saleKind,
         target: buy.target,
         howToCall: buy.howToCall,
-        calldata: buy.calldata,
+        callData: buy.calldata,
         replacementPattern: buy.replacementPattern,
         staticTarget: buy.staticTarget,
         staticExtradata: buy.staticExtradata,
@@ -62,7 +62,7 @@ export async function requireOrdersCanMatch(
         salt: buy.salt
       };
   
-      const sellOrder: WyvernOrder = {
+      const sellOrder = {
         exchange: sell.exchange,
         maker: sell.maker,
         taker: sell.taker,
@@ -76,7 +76,7 @@ export async function requireOrdersCanMatch(
         saleKind: sell.saleKind,
         target: sell.target,
         howToCall: sell.howToCall,
-        calldata: sell.calldata,
+        callData: sell.calldata,
         replacementPattern: sell.replacementPattern,
         staticTarget: sell.staticTarget,
         staticExtradata: sell.staticExtradata,
@@ -88,7 +88,7 @@ export async function requireOrdersCanMatch(
         salt: sell.salt
       };
 
-    const result = await client.wyvernExchange.ordersCanMatch_.callAsync(
+    const result = await client.wyvernExchange.ordersCanMatch.callAsync(
         buyOrder,
         sellOrder,
         {from: accountAddress},
