@@ -9,7 +9,7 @@ export declare const RINKEBY_PROVIDER_URL = "https://rinkeby-api.opensea.io/json
 export declare const INVERSE_BASIS_POINT = 10000;
 export declare const MAX_UINT_256: BigNumber;
 export declare const WYVERN_EXCHANGE_ADDRESS_MAINNET = "0x7be8076f4ea4a4ad08075c2508e481d6c946d12b";
-export declare const WYVERN_EXCHANGE_ADDRESS_RINKEBY = "0x5206e78b21ce315ce284fb24cf05e0585a93b1d9";
+export declare const WYVERN_EXCHANGE_ADDRESS_RINKEBY = "0xf856D380F53555012D731Eec19f2c81D96809827";
 export declare const ENJIN_COIN_ADDRESS = "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c";
 export declare const MANA_ADDRESS = "0x0f5d2fb29fb7d3cfee444a200298f468908cc942";
 export declare const ENJIN_ADDRESS = "0xfaaFDc07907ff5120a76b34b731b278c38d6043C";
@@ -50,4 +50,4 @@ export declare const SITE_HOST_RINKEBY = "https://rinkeby.opensea.io";
 export declare const ORDERBOOK_PATH: string;
 export declare const API_PATH: string;
 export declare const SWAP_TOKEN_ADDRESS = "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe";
-export declare const SWAP_TOKEN_RINKEBY_ADDRESS: string;
+export declare const SWAP_TOKEN_RINKEBY_ADDRESS = "0xCB75c9e9b636a4FEe33ED9Da52AEFae67BB4218c";
