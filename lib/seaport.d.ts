@@ -1,13 +1,13 @@
 import * as Web3 from 'web3';
-import { OpenSeaAPI } from './api';
-import { FeeMethod, OpenSeaAPIConfig, OrderSide, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, OpenSeaAsset, WyvernSchemaName, OpenSeaFungibleToken, WyvernAsset, ComputedFees, Asset } from './types';
+import { SwappableAPI } from './api';
+import { FeeMethod, SwappableAPIConfig, OrderSide, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, SwappableAsset, WyvernSchemaName, SwappableFungibleToken, WyvernAsset, ComputedFees, Asset } from './types';
 import { BigNumber } from 'bignumber.js';
 import { EventSubscription } from 'fbemitter';
-export declare class OpenSeaPort {
+export declare class SwappablePort {
     web3: Web3;
     web3ReadOnly: Web3;
     logger: (arg: string) => void;
-    readonly api: OpenSeaAPI;
+    readonly api: SwappableAPI;
     gasPriceAddition: BigNumber;
     gasIncreaseFactor: number;
     private _networkName;
@@ -19,14 +19,14 @@ export declare class OpenSeaPort {
     private _uniswapFactoryAddress;
     /**
      * Your very own seaport.
-     * Create a new instance of OpenSeaJS.
+     * Create a new instance of SwappableJS.
      * @param provider Web3 Provider to use for transactions. For example:
      *  `const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')`
      * @param apiConfig configuration options, including `networkName`
      * @param logger logger, optional, a function that will be called with debugging
      *  information
      */
-    constructor(provider: Web3.Provider, apiConfig?: OpenSeaAPIConfig, logger?: (arg: string) => void);
+    constructor(provider: Web3.Provider, apiConfig?: SwappableAPIConfig, logger?: (arg: string) => void);
     /**
      * Add a listener to a marketplace event
      * @param event An event to listen for
@@ -224,7 +224,7 @@ export declare class OpenSeaPort {
     /**
      * Create multiple sell orders in bulk to auction assets out of an asset factory.
      * Will throw a 'You do not own this asset' error if the maker doesn't own the factory.
-     * Items will mint to users' wallets only when they buy them. See https://docs.opensea.io/docs/opensea-initial-item-sale-tutorial for more info.
+     * Items will mint to users' wallets only when they buy them. See https://docs.swappable.io/docs/swappable-initial-item-sale-tutorial for more info.
      * If the user hasn't approved access to the token yet, this will emit `ApproveAllAssets` (or `ApproveAsset` if the contract doesn't support approve-all) before asking for approval.
      * @param param0 __namedParameters Object
      * @param assets Which assets you want to post orders for. Use the tokenAddress of your factory contract
@@ -466,13 +466,13 @@ export declare class OpenSeaPort {
      *    Not guaranteed to exist or be unique for each token type.
      *    e.g. '' for Dai and 'Decentraland' for MANA
      * FUTURE: officiallySupported: Filter for tokens that are
-     *    officially supported and shown on opensea.io
+     *    officially supported and shown on swappable.io
      */
     getFungibleTokens({ symbol, address, name }?: {
         symbol?: string;
         address?: string;
         name?: string;
-    }): Promise<OpenSeaFungibleToken[]>;
+    }): Promise<SwappableFungibleToken[]>;
     /**
      * Get an account's balance of any Asset.
      * @param param0 __namedParameters Object
@@ -505,10 +505,10 @@ export declare class OpenSeaPort {
      * @param side The side of the order (buy or sell)
      * @param accountAddress The account to check fees for (useful if fees differ by account, like transfer fees)
      * @param isPrivate Whether the order is private or not (known taker)
-     * @param extraBountyBasisPoints The basis points to add for the bounty. Will throw if it exceeds the assets' contract's OpenSea fee.
+     * @param extraBountyBasisPoints The basis points to add for the bounty. Will throw if it exceeds the assets' contract's Swappable fee.
      */
     computeFees({ asset, side, accountAddress, isPrivate, extraBountyBasisPoints, paymentTokenAddress }: {
-        asset?: OpenSeaAsset;
+        asset?: SwappableAsset;
         side: OrderSide;
         accountAddress?: string;
         isPrivate?: boolean;
@@ -516,7 +516,7 @@ export declare class OpenSeaPort {
         paymentTokenAddress: string;
     }): Promise<ComputedFees>;
     /**
-     * Validate and post an order to the OpenSea orderbook.
+     * Validate and post an order to the Swappable orderbook.
      * @param order The order to post. Can either be signed by the maker or pre-approved on the Wyvern contract using approveOrder. See https://github.com/ProjectWyvern/wyvern-ethereum/blob/master/contracts/exchange/Exchange.sol#L178
      * @returns The order as stored by the orderbook
      */
@@ -616,7 +616,7 @@ export declare class OpenSeaPort {
         buyerAddress: string;
     }): Promise<UnhashedOrder>;
     _getStaticCallTargetAndExtraData({ asset, useTxnOriginStaticCall }: {
-        asset: OpenSeaAsset;
+        asset: SwappableAsset;
         useTxnOriginStaticCall: boolean;
     }): Promise<{
         staticTarget: string;

@@ -1,8 +1,8 @@
 import 'isomorphic-unfetch';
-import { OpenSeaAPIConfig, OpenSeaAsset, OpenSeaAssetBundle, OpenSeaAssetBundleQuery, OpenSeaAssetQuery, OpenSeaFungibleToken, OpenSeaFungibleTokenQuery, Order, OrderJSON, OrderQuery } from './types';
-export declare class OpenSeaAPI {
+import { SwappableAPIConfig, SwappableAsset, SwappableAssetBundle, SwappableAssetBundleQuery, SwappableAssetQuery, SwappableFungibleToken, SwappableFungibleTokenQuery, Order, OrderJSON, OrderQuery } from './types';
+export declare class SwappableAPI {
     /**
-     * Host url for OpenSea
+     * Host url for Swappable
      */
     readonly hostUrl: string;
     /**
@@ -19,11 +19,11 @@ export declare class OpenSeaAPI {
     logger: (arg: string) => void;
     private apiKey;
     /**
-     * Create an instance of the OpenSea API
-     * @param config OpenSeaAPIConfig for setting up the API, including an optional API key, network name, and base URL
+     * Create an instance of the Swappable API
+     * @param config SwappableAPIConfig for setting up the API, including an optional API key, network name, and base URL
      * @param logger Optional function for logging debug strings before and after requests are made
      */
-    constructor(config: OpenSeaAPIConfig, logger?: (arg: string) => void);
+    constructor(config: SwappableAPIConfig, logger?: (arg: string) => void);
     /**
      * Send an order to the orderbook.
      * Throws when the order is invalid.
@@ -69,26 +69,26 @@ export declare class OpenSeaAPI {
     getAsset({ tokenAddress, tokenId }: {
         tokenAddress: string;
         tokenId: string | number | null;
-    }, retries?: number): Promise<OpenSeaAsset>;
+    }, retries?: number): Promise<SwappableAsset>;
     /**
      * Fetch list of assets from the API, returning the page of assets and the count of total assets
-     * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetJSON` type is supported
+     * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetJSON` type is supported
      * @param page Page number, defaults to 1. Can be overridden by
-     * `limit` and `offset` attributes from OpenSeaAssetQuery
+     * `limit` and `offset` attributes from SwappableAssetQuery
      */
-    getAssets(query?: OpenSeaAssetQuery, page?: number): Promise<{
-        assets: OpenSeaAsset[];
+    getAssets(query?: SwappableAssetQuery, page?: number): Promise<{
+        assets: SwappableAsset[];
         estimatedCount: number;
     }>;
     /**
      * Fetch list of fungible tokens from the API matching paramters
-     * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetJSON` type is supported
+     * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetJSON` type is supported
      * @param page Page number, defaults to 1. Can be overridden by
-     * `limit` and `offset` attributes from OpenSeaFungibleTokenQuery
+     * `limit` and `offset` attributes from SwappableFungibleTokenQuery
      * @param retries Number of times to retry if the service is unavailable for any reason
      */
-    getPaymentTokens(query?: OpenSeaFungibleTokenQuery, page?: number, retries?: number): Promise<{
-        tokens: OpenSeaFungibleToken[];
+    getPaymentTokens(query?: SwappableFungibleTokenQuery, page?: number, retries?: number): Promise<{
+        tokens: SwappableFungibleToken[];
     }>;
     /**
      * Fetch an bundle from the API, return null if it isn't found
@@ -96,15 +96,15 @@ export declare class OpenSeaAPI {
      */
     getBundle({ slug }: {
         slug: string;
-    }): Promise<OpenSeaAssetBundle | null>;
+    }): Promise<SwappableAssetBundle | null>;
     /**
      * Fetch list of bundles from the API, returning the page of bundles and the count of total bundles
-     * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetBundleJSON` type is supported
+     * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetBundleJSON` type is supported
      * @param page Page number, defaults to 1. Can be overridden by
-     * `limit` and `offset` attributes from OpenSeaAssetBundleQuery
+     * `limit` and `offset` attributes from SwappableAssetBundleQuery
      */
-    getBundles(query?: OpenSeaAssetBundleQuery, page?: number): Promise<{
-        bundles: OpenSeaAssetBundle[];
+    getBundles(query?: SwappableAssetBundleQuery, page?: number): Promise<{
+        bundles: SwappableAssetBundle[];
         estimatedCount: number;
     }>;
     /**
