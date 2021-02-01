@@ -1,7 +1,7 @@
 {
-  "name": "opensea-js",
-  "version": "1.1.10",
-  "description": "JavaScript SDK for the OpenSea marketplace. Let users buy or sell crypto collectibles and other cryptogoods, all on your own site!",
+  "name": "swappable-js",
+  "version": "1.0.0",
+  "description": "JavaScript SDK for the Swappable marketplace. Let users buy or sell crypto collectibles and other cryptogoods, all on your own site!",
   "files": [
     "lib",
     "webpack.config.js"
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProjectOpenSea/opensea-js.git"
+    "url": "git+https://github.com/swappable/swappable-js.git"
   },
   "keywords": [
     "marketplace",
@@ -29,15 +29,11 @@
     "nft",
     "non-fungible-tokens",
     "ethereum",
-    "project-opensea",
+    "swappable",
     "smart-contracts"
   ],
-  "author": "OpenSea Developers",
+  "author": "Swappable Developers",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ProjectOpenSea/opensea-js/issues"
-  },
-  "homepage": "https://docs.opensea.io/v1.0/reference",
   "dependencies": {
     "bignumber.js": "^4.1.0",
     "ethereumjs-abi": "git+https://github.com/ProjectWyvern/ethereumjs-abi.git",
@@ -50,7 +46,7 @@
     "web3": "0.20.7",
     "webpack": "^3.10.0",
     "wyvern-js": "git+https://github.com/knackroot-technolabs-llp/wyvern-js.git#develop-contracts",
-    "wyvern-schemas": "git+https://github.com/ProjectOpenSea/wyvern-schemas.git#v0.11.1"
+    "wyvern-schemas": "git+https://github.com/knackroot-technolabs-llp/wyvern-schemas.git#v0.11.1"
   },
   "husky": {
     "hooks": {

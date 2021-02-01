@@ -9,7 +9,7 @@ import {
   test,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { Network, OrderJSON, OrderSide, Order, SaleKind, UnhashedOrder, UnsignedOrder, Asset, WyvernSchemaName } from '../../src/types'
 import { orderFromJSON, getOrderHash, estimateCurrentPrice, assignOrdersToSides, makeBigNumber} from '../../src/utils/utils'
@@ -22,7 +22,7 @@ import {
   INVERSE_BASIS_POINT,
   MAINNET_PROVIDER_URL,
   NULL_ADDRESS,
-  OPENSEA_FEE_RECIPIENT,
+  SWAPPABLE_FEE_RECIPIENT,
   RINKEBY_PROVIDER_URL
 } from '../../src/constants'
 
@@ -32,12 +32,12 @@ const englishSellOrderJSON = ordersJSON[0] as OrderJSON
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 const rinkebyProvider = new Web3.providers.HttpProvider(RINKEBY_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))
 
-const rinkebyClient = new OpenSeaPort(rinkebyProvider, {
+const rinkebyClient = new SwappablePort(rinkebyProvider, {
   networkName: Network.Rinkeby,
   apiKey: RINKEBY_API_KEY
 }, line => console.info(`RINKEBY: ${line}`))
@@ -825,7 +825,7 @@ export async function testMatchingNewOrder(unhashedOrder: UnhashedOrder, account
   assert.equal(matchingOrder.makerProtocolFee.toNumber(), 0)
   assert.equal(matchingOrder.takerProtocolFee.toNumber(), 0)
   if (order.waitingForBestCounterOrder) {
-    assert.equal(matchingOrder.feeRecipient, OPENSEA_FEE_RECIPIENT)
+    assert.equal(matchingOrder.feeRecipient, SWAPPABLE_FEE_RECIPIENT)
   } else {
     assert.equal(matchingOrder.feeRecipient, NULL_ADDRESS)
   }

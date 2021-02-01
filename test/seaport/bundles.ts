@@ -9,7 +9,7 @@ import {
   test,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { Network, WyvernSchemaName, UnhashedOrder } from '../../src/types'
 import { ALEX_ADDRESS, DIGITAL_ART_CHAIN_ADDRESS, DIGITAL_ART_CHAIN_TOKEN_ID, MYTHEREUM_TOKEN_ID, MYTHEREUM_ADDRESS, MAINNET_API_KEY, DISSOLUTION_TOKEN_ID, GODS_UNCHAINED_CHEST_ADDRESS, CRYPTOVOXELS_WEARABLE_ID, CRYPTOVOXELS_WEARABLE_ADDRESS, AGE_OF_RUST_TOKEN_ID, ALEX_ADDRESS_2, BENZENE_ADDRESS, CRYPTOVOXELS_WEARABLE_2_ID, WETH_ADDRESS } from '../constants'
@@ -23,7 +23,7 @@ import {
 
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))

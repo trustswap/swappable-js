@@ -1,5 +1,5 @@
-import { OpenSeaPort } from './seaport'
-import { OpenSeaAPI } from './api'
+import { SwappablePort } from './seaport'
+import { SwappableAPI } from './api'
 import { Network, EventData, EventType } from './types'
 export { orderToJSON, orderFromJSON, WyvernProtocol } from './utils/utils'
 export {
@@ -13,21 +13,21 @@ export {
  * Example setup:
  *
  * import * as Web3 from 'web3'
- * import { OpenSeaPort, Network } from 'opensea-js'
+ * import { SwappablePort, Network } from 'swappable-js'
  * const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
- * const client = new OpenSeaPort(provider, {
+ * const client = new SwappablePort(provider, {
  *   networkName: Network.Main
  * })
  */
 
 export {
   // Main SDK export:
-  OpenSeaPort,
+  SwappablePort,
   // So the API could be used separately:
-  OpenSeaAPI,
+  SwappableAPI,
   // Useful for serializing and deserializing orders:
   // Types to help initialize SDK and listen to events.
   // Can also be imported using e.g.
-  //   import { EventType } from 'opensea-js/lib/types'
+  //   import { EventType } from 'swappable-js/lib/types'
   EventData, EventType, Network
 }

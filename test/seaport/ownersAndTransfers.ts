@@ -9,7 +9,7 @@ import {
   test,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { Network, WyvernSchemaName, WyvernNFTAsset, WyvernFTAsset } from '../../src/types'
 import { ALEX_ADDRESS, DIGITAL_ART_CHAIN_ADDRESS, DIGITAL_ART_CHAIN_TOKEN_ID, MYTHEREUM_TOKEN_ID, MYTHEREUM_ADDRESS, GODS_UNCHAINED_ADDRESS, CK_ADDRESS, DEVIN_ADDRESS, ALEX_ADDRESS_2, GODS_UNCHAINED_TOKEN_ID, CK_TOKEN_ID, MAINNET_API_KEY, RINKEBY_API_KEY, CK_RINKEBY_ADDRESS, CK_RINKEBY_TOKEN_ID, CATS_IN_MECHS_ID, RANDOM_ADDRESS, DISSOLUTION_TOKEN_ID, SANDBOX_RINKEBY_ID, SANDBOX_RINKEBY_ADDRESS, AGE_OF_RUST_TOKEN_ID, WETH_ADDRESS } from '../constants'
@@ -21,12 +21,12 @@ import {
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 const rinkebyProvider = new Web3.providers.HttpProvider(RINKEBY_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))
 
-const rinkebyClient = new OpenSeaPort(rinkebyProvider, {
+const rinkebyClient = new SwappablePort(rinkebyProvider, {
   networkName: Network.Rinkeby,
   apiKey: RINKEBY_API_KEY
 }, line => console.info(`RINKEBY: ${line}`))

@@ -12,19 +12,19 @@ import {
 } from 'wyvern-schemas/dist/types'
 import { ERC1155 } from '../contracts'
 
-import { OpenSeaPort } from '..'
+import { SwappablePort } from '..'
 import {
   Asset,
   AssetContractType,
   AssetEvent,
   ECSignature,
-  OpenSeaAccount,
-  OpenSeaAsset,
-  OpenSeaAssetBundle,
-  OpenSeaAssetContract,
-  OpenSeaCollection,
-  OpenSeaFungibleToken,
-  OpenSeaTraitStats, OpenSeaUser,
+  SwappableAccount,
+  SwappableAsset,
+  SwappableAssetBundle,
+  SwappableAssetContract,
+  SwappableCollection,
+  SwappableFungibleToken,
+  SwappableTraitStats, SwappableUser,
   Order,
   OrderJSON,
   OrderSide,
@@ -205,10 +205,10 @@ export const confirmTransaction = async (web3: Web3, txHash: string) => {
   })
 }
 
-export const assetFromJSON = (asset: any): OpenSeaAsset => {
+export const assetFromJSON = (asset: any): SwappableAsset => {
   const isAnimated = asset.image_url && asset.image_url.endsWith('.gif')
   const isSvg = asset.image_url && asset.image_url.endsWith('.svg')
-  const fromJSON: OpenSeaAsset = {
+  const fromJSON: SwappableAsset = {
     tokenId: asset.token_id.toString(),
     tokenAddress: asset.asset_contract.address,
     name: asset.name,
@@ -230,7 +230,7 @@ export const assetFromJSON = (asset: any): OpenSeaAsset => {
     imageUrlThumbnail: asset.image_thumbnail_url,
 
     externalLink: asset.external_link,
-    openseaLink: asset.permalink,
+    swappableLink: asset.permalink,
     traits: asset.traits,
     numSales: asset.num_sales,
     lastSale: asset.last_sale ? assetEventFromJSON(asset.last_sale) : null,
@@ -278,7 +278,7 @@ export const transactionFromJSON = (transaction: any): Transaction => {
   }
 }
 
-export const accountFromJSON = (account: any): OpenSeaAccount => {
+export const accountFromJSON = (account: any): SwappableAccount => {
   return {
     address: account.address,
     config: account.config,
@@ -287,15 +287,15 @@ export const accountFromJSON = (account: any): OpenSeaAccount => {
   }
 }
 
-export const userFromJSON = (user: any): OpenSeaUser => {
+export const userFromJSON = (user: any): SwappableUser => {
   return {
     username: user.username
   }
 }
 
-export const assetBundleFromJSON = (asset_bundle: any): OpenSeaAssetBundle => {
+export const assetBundleFromJSON = (asset_bundle: any): SwappableAssetBundle => {
 
-  const fromJSON: OpenSeaAssetBundle = {
+  const fromJSON: SwappableAssetBundle = {
     maker: asset_bundle.maker,
     assets: asset_bundle.assets.map(assetFromJSON),
     assetContract: asset_bundle.asset_contract
@@ -313,7 +313,7 @@ export const assetBundleFromJSON = (asset_bundle: any): OpenSeaAssetBundle => {
   return fromJSON
 }
 
-export const assetContractFromJSON = (asset_contract: any): OpenSeaAssetContract => {
+export const assetContractFromJSON = (asset_contract: any): SwappableAssetContract => {
   return {
     name: asset_contract.name,
     description: asset_contract.description,
@@ -323,8 +323,8 @@ export const assetContractFromJSON = (asset_contract: any): OpenSeaAssetContract
     tokenSymbol: asset_contract.symbol,
     buyerFeeBasisPoints: +asset_contract.buyer_fee_basis_points,
     sellerFeeBasisPoints: +asset_contract.seller_fee_basis_points,
-    openseaBuyerFeeBasisPoints: +asset_contract.opensea_buyer_fee_basis_points,
-    openseaSellerFeeBasisPoints: +asset_contract.opensea_seller_fee_basis_points,
+    swappableBuyerFeeBasisPoints: +asset_contract.swappable_buyer_fee_basis_points,
+    swappableSellerFeeBasisPoints: +asset_contract.swappable_seller_fee_basis_points,
     devBuyerFeeBasisPoints: +asset_contract.dev_buyer_fee_basis_points,
     devSellerFeeBasisPoints: +asset_contract.dev_seller_fee_basis_points,
     imageUrl: asset_contract.image_url,
@@ -333,7 +333,7 @@ export const assetContractFromJSON = (asset_contract: any): OpenSeaAssetContract
   }
 }
 
-export const collectionFromJSON = (collection: any): OpenSeaCollection => {
+export const collectionFromJSON = (collection: any): SwappableCollection => {
   const createdDate = new Date(`${collection.created_date}Z`)
 
   return {
@@ -347,23 +347,23 @@ export const collectionFromJSON = (collection: any): OpenSeaCollection => {
     featuredImageUrl: collection.featured_image_url,
     displayData: collection.display_data,
     paymentTokens: (collection.payment_tokens || []).map(tokenFromJSON),
-    openseaBuyerFeeBasisPoints: +collection.opensea_buyer_fee_basis_points,
-    openseaSellerFeeBasisPoints: +collection.opensea_seller_fee_basis_points,
+    swappableBuyerFeeBasisPoints: +collection.swappable_buyer_fee_basis_points,
+    swappableSellerFeeBasisPoints: +collection.swappable_seller_fee_basis_points,
     devBuyerFeeBasisPoints: +collection.dev_buyer_fee_basis_points,
     devSellerFeeBasisPoints: +collection.dev_seller_fee_basis_points,
     payoutAddress: collection.payout_address,
     imageUrl: collection.image_url,
     largeImageUrl: collection.large_image_url,
     stats: collection.stats,
-    traitStats: collection.traits as OpenSeaTraitStats,
+    traitStats: collection.traits as SwappableTraitStats,
     externalLink: collection.external_url,
     wikiLink: collection.wiki_url,
   }
 }
 
-export const tokenFromJSON = (token: any): OpenSeaFungibleToken => {
+export const tokenFromJSON = (token: any): SwappableFungibleToken => {
 
-  const fromJSON: OpenSeaFungibleToken = {
+  const fromJSON: SwappableFungibleToken = {
     name: token.name,
     symbol: token.symbol,
     decimals: token.decimals,
@@ -887,7 +887,7 @@ export function assignOrdersToSides(order: Order, matchingOrder: UnsignedOrder )
 
 // BROKEN
 // TODO fix this calldata for buy orders
-async function canSettleOrder(client: OpenSeaPort, order: Order, matchingOrder: Order): Promise<boolean> {
+async function canSettleOrder(client: SwappablePort, order: Order, matchingOrder: Order): Promise<boolean> {
 
   // HACK that doesn't always work
   //  to change null address to 0x1111111... for replacing calldata
@@ -920,7 +920,7 @@ export async function delay(ms: number) {
 
 /**
  * Validates that an address exists, isn't null, and is properly
- * formatted for Wyvern and OpenSea
+ * formatted for Wyvern and Swappable
  * @param address input address
  */
 export function validateAndFormatWalletAddress(web3: Web3, address: string): string {

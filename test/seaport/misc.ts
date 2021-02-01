@@ -7,7 +7,7 @@ import {
   test,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { Network, Asset, WyvernSchemaName } from '../../src/types'
 import { getCurrentGasPrice, getNonCompliantApprovalAddress, isContractAddress} from '../../src/utils/utils'
@@ -21,7 +21,7 @@ import {
 
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))

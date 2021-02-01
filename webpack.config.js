@@ -16,7 +16,7 @@ module.exports = {
     path: path.resolve(__dirname, '_bundles'),
     filename: '[name].js',
     libraryTarget: 'commonjs',
-    library: 'OpenSea'
+    library: 'Swappable'
   },
   resolve: {
     extensions: ['.ts', '.js', '.json']

@@ -3,9 +3,9 @@ import { WyvernProtocol } from 'wyvern-js'
 import * as WyvernSchemas from 'wyvern-schemas'
 import { Schema } from 'wyvern-schemas/dist/types'
 import * as _ from 'lodash'
-import { OpenSeaAPI } from './api'
+import { SwappableAPI } from './api'
 import { CanonicalWETH, ERC20, ERC721, WrappedNFT, WrappedNFTFactory, WrappedNFTLiquidationProxy, UniswapFactory, UniswapExchange, StaticCheckTxOrigin, StaticCheckCheezeWizards, StaticCheckDecentralandEstates, CheezeWizardsBasicTournament, DecentralandEstates, getMethod } from './contracts'
-import { ECSignature, FeeMethod, HowToCall, Network, OpenSeaAPIConfig, OrderSide, SaleKind, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, OpenSeaAsset, WyvernSchemaName, WyvernAtomicMatchParameters, OpenSeaFungibleToken, WyvernAsset, ComputedFees, Asset, WyvernNFTAsset, WyvernFTAsset, TokenStandardVersion } from './types'
+import { ECSignature, FeeMethod, HowToCall, Network, SwappableAPIConfig, OrderSide, SaleKind, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, SwappableAsset, WyvernSchemaName, WyvernAtomicMatchParameters, SwappableFungibleToken, WyvernAsset, ComputedFees, Asset, WyvernNFTAsset, WyvernFTAsset, TokenStandardVersion } from './types'
 import {
   confirmTransaction,
   makeBigNumber, orderToJSON,
@@ -57,8 +57,8 @@ import {
   DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP,
   DEFAULT_WRAPPED_NFT_LIQUIDATION_UNISWAP_SLIPPAGE_IN_BASIS_POINTS,
   INVERSE_BASIS_POINT, MAINNET_PROVIDER_URL,
-  MIN_EXPIRATION_SECONDS, NULL_ADDRESS, NULL_BLOCK_HASH, OPENSEA_FEE_RECIPIENT,
-  OPENSEA_SELLER_BOUNTY_BASIS_POINTS,
+  MIN_EXPIRATION_SECONDS, NULL_ADDRESS, NULL_BLOCK_HASH, SWAPPABLE_FEE_RECIPIENT,
+  SWAPPABLE_SELLER_BOUNTY_BASIS_POINTS,
   ORDER_MATCHING_LATENCY_SECONDS, RINKEBY_PROVIDER_URL,
   SELL_ORDER_BATCH_SIZE,
   STATIC_CALL_CHEEZE_WIZARDS_ADDRESS,
@@ -78,7 +78,7 @@ import {
   SWAP_TOKEN_RINKEBY_ADDRESS
 } from './constants'
 
-export class OpenSeaPort {
+export class SwappablePort {
 
   // Web3 instance to use
   public web3: Web3
@@ -86,7 +86,7 @@ export class OpenSeaPort {
   // Logger function to use when debugging
   public logger: (arg: string) => void
   // API instance on this seaport
-  public readonly api: OpenSeaAPI
+  public readonly api: SwappableAPI
   // Extra gwei to add to the mean gas price when making transactions
   public gasPriceAddition = new BigNumber(3)
   // Multiply gas estimate by this factor when making transactions
@@ -102,19 +102,19 @@ export class OpenSeaPort {
 
   /**
    * Your very own seaport.
-   * Create a new instance of OpenSeaJS.
+   * Create a new instance of SwappableJS.
    * @param provider Web3 Provider to use for transactions. For example:
    *  `const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')`
    * @param apiConfig configuration options, including `networkName`
    * @param logger logger, optional, a function that will be called with debugging
    *  information
    */
-  constructor(provider: Web3.Provider, apiConfig: OpenSeaAPIConfig = {}, logger?: (arg: string) => void) {
+  constructor(provider: Web3.Provider, apiConfig: SwappableAPIConfig = {}, logger?: (arg: string) => void) {
 
     // API config
     apiConfig.networkName = apiConfig.networkName || Network.Main
     apiConfig.gasPrice = apiConfig.gasPrice || makeBigNumber(300000)
-    this.api = new OpenSeaAPI(apiConfig)
+    this.api = new SwappableAPI(apiConfig)
 
     this._networkName = apiConfig.networkName
 
@@ -666,7 +666,7 @@ export class OpenSeaPort {
   /**
    * Create multiple sell orders in bulk to auction assets out of an asset factory.
    * Will throw a 'You do not own this asset' error if the maker doesn't own the factory.
-   * Items will mint to users' wallets only when they buy them. See https://docs.opensea.io/docs/opensea-initial-item-sale-tutorial for more info.
+   * Items will mint to users' wallets only when they buy them. See https://docs.swappable.io/docs/swappable-initial-item-sale-tutorial for more info.
    * If the user hasn't approved access to the token yet, this will emit `ApproveAllAssets` (or `ApproveAsset` if the contract doesn't support approve-all) before asking for approval.
    * @param param0 __namedParameters Object
    * @param assets Which assets you want to post orders for. Use the tokenAddress of your factory contract
@@ -1446,14 +1446,14 @@ export class OpenSeaPort {
    *    Not guaranteed to exist or be unique for each token type.
    *    e.g. '' for Dai and 'Decentraland' for MANA
    * FUTURE: officiallySupported: Filter for tokens that are
-   *    officially supported and shown on opensea.io
+   *    officially supported and shown on swappable.io
    */
   public async getFungibleTokens(
       { symbol, address, name }:
       { symbol?: string;
         address?: string;
         name?: string } = {}
-    ): Promise<OpenSeaFungibleToken[]> {
+    ): Promise<SwappableFungibleToken[]> {
 
     onDeprecated("Use `api.getPaymentTokens` instead")
 
@@ -1461,7 +1461,7 @@ export class OpenSeaPort {
 
     const { tokens } = await this.api.getPaymentTokens({ symbol, address, name })
 
-    const offlineTokens: OpenSeaFungibleToken[] = [
+    const offlineTokens: SwappableFungibleToken[] = [
       tokenSettings.canonicalWrappedEther,
       ...tokenSettings.otherTokens,
     ].filter(t => {
@@ -1574,11 +1574,11 @@ export class OpenSeaPort {
    * @param side The side of the order (buy or sell)
    * @param accountAddress The account to check fees for (useful if fees differ by account, like transfer fees)
    * @param isPrivate Whether the order is private or not (known taker)
-   * @param extraBountyBasisPoints The basis points to add for the bounty. Will throw if it exceeds the assets' contract's OpenSea fee.
+   * @param extraBountyBasisPoints The basis points to add for the bounty. Will throw if it exceeds the assets' contract's Swappable fee.
    */
   public async computeFees(
       { asset, side, accountAddress, isPrivate = false, extraBountyBasisPoints = 0, paymentTokenAddress}:
-      { asset?: OpenSeaAsset;
+      { asset?: SwappableAsset;
         side: OrderSide;
         accountAddress?: string;
         isPrivate?: boolean;
@@ -1588,8 +1588,8 @@ export class OpenSeaPort {
 
     const isMainnet = this._networkName == Network.Main
     const isPaymentInSwap = (isMainnet ? paymentTokenAddress == SWAP_TOKEN_ADDRESS : paymentTokenAddress == SWAP_TOKEN_RINKEBY_ADDRESS)
-    let openseaBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
-    let openseaSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
+    let swappableBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
+    let swappableSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
     let devBuyerFeeBasisPoints = 0
     let devSellerFeeBasisPoints = 0
     let transferFee = makeBigNumber(0)
@@ -1597,12 +1597,12 @@ export class OpenSeaPort {
     let maxTotalBountyBPS = DEFAULT_MAX_BOUNTY
 
     if (asset) {
-      openseaBuyerFeeBasisPoints = +asset.collection.openseaBuyerFeeBasisPoints
-      openseaSellerFeeBasisPoints = +asset.collection.openseaSellerFeeBasisPoints
+      swappableBuyerFeeBasisPoints = +asset.collection.swappableBuyerFeeBasisPoints
+      swappableSellerFeeBasisPoints = +asset.collection.swappableSellerFeeBasisPoints
       devBuyerFeeBasisPoints = +asset.collection.devBuyerFeeBasisPoints
       devSellerFeeBasisPoints = +asset.collection.devSellerFeeBasisPoints
 
-      maxTotalBountyBPS = openseaSellerFeeBasisPoints
+      maxTotalBountyBPS = swappableSellerFeeBasisPoints
     }
 
     // Compute transferFrom fees
@@ -1631,30 +1631,30 @@ export class OpenSeaPort {
       ? extraBountyBasisPoints
       : 0
 
-    // Check that bounty is in range of the opensea fee
-    const bountyTooLarge = sellerBountyBasisPoints + OPENSEA_SELLER_BOUNTY_BASIS_POINTS > maxTotalBountyBPS
+    // Check that bounty is in range of the swappable fee
+    const bountyTooLarge = sellerBountyBasisPoints + SWAPPABLE_SELLER_BOUNTY_BASIS_POINTS > maxTotalBountyBPS
     if (sellerBountyBasisPoints > 0 && bountyTooLarge) {
       let errorMessage = `Total bounty exceeds the maximum for this asset type (${maxTotalBountyBPS / 100}%).`
-      if (maxTotalBountyBPS >= OPENSEA_SELLER_BOUNTY_BASIS_POINTS) {
-        errorMessage += ` Remember that OpenSea will add ${OPENSEA_SELLER_BOUNTY_BASIS_POINTS / 100}% for referrers with OpenSea accounts!`
+      if (maxTotalBountyBPS >= SWAPPABLE_SELLER_BOUNTY_BASIS_POINTS) {
+        errorMessage += ` Remember that Swappable will add ${SWAPPABLE_SELLER_BOUNTY_BASIS_POINTS / 100}% for referrers with Swappable accounts!`
       }
       throw new Error(errorMessage)
     }
 
     // Remove fees for private orders
     if (isPrivate) {
-      openseaBuyerFeeBasisPoints = 0
-      openseaSellerFeeBasisPoints = 0
+      swappableBuyerFeeBasisPoints = 0
+      swappableSellerFeeBasisPoints = 0
       devBuyerFeeBasisPoints = 0
       devSellerFeeBasisPoints = 0
       sellerBountyBasisPoints = 0
     }
 
     return {
-      totalBuyerFeeBasisPoints: openseaBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
-      totalSellerFeeBasisPoints: openseaSellerFeeBasisPoints + devSellerFeeBasisPoints,
-      openseaBuyerFeeBasisPoints,
-      openseaSellerFeeBasisPoints,
+      totalBuyerFeeBasisPoints: swappableBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
+      totalSellerFeeBasisPoints: swappableSellerFeeBasisPoints + devSellerFeeBasisPoints,
+      swappableBuyerFeeBasisPoints,
+      swappableSellerFeeBasisPoints,
       devBuyerFeeBasisPoints,
       devSellerFeeBasisPoints,
       sellerBountyBasisPoints,
@@ -1664,7 +1664,7 @@ export class OpenSeaPort {
   }
 
   /**
-   * Validate and post an order to the OpenSea orderbook.
+   * Validate and post an order to the Swappable orderbook.
    * @param order The order to post. Can either be signed by the maker or pre-approved on the Wyvern contract using approveOrder. See https://github.com/ProjectWyvern/wyvern-ethereum/blob/master/contracts/exchange/Exchange.sol#L178
    * @returns The order as stored by the orderbook
    */
@@ -1908,7 +1908,7 @@ export class OpenSeaPort {
     const quantityBN = WyvernProtocol.toBaseUnitAmount(makeBigNumber(quantity), asset.decimals || 0)
     const wyAsset = getWyvernAsset(schema, asset, quantityBN)
 
-    const openSeaAsset: OpenSeaAsset = await this.api.getAsset(asset)
+    const swappableAsset: SwappableAsset = await this.api.getAsset(asset)
 
     const taker = sellOrder
       ? sellOrder.maker
@@ -1917,7 +1917,7 @@ export class OpenSeaPort {
     const {
       totalBuyerFeeBasisPoints,
       totalSellerFeeBasisPoints
-    } = await this.computeFees({ asset: openSeaAsset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
+    } = await this.computeFees({ asset: swappableAsset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
 
     const {
       makerRelayerFee,
@@ -1934,7 +1934,7 @@ export class OpenSeaPort {
     const { basePrice, extra, paymentToken } = await this._getPriceParameters(OrderSide.Buy, paymentTokenAddress, expirationTime, startAmount)
     const times = this._getTimeParameters(expirationTime)
 
-    const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: openSeaAsset, useTxnOriginStaticCall: false })
+    const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: false })
 
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
@@ -1992,11 +1992,11 @@ export class OpenSeaPort {
     const wyAsset = getWyvernAsset(schema, asset, quantityBN)
     const isPrivate = buyerAddress != NULL_ADDRESS
 
-    const openSeaAsset = await this.api.getAsset(asset)
+    const swappableAsset = await this.api.getAsset(asset)
 
     const { totalSellerFeeBasisPoints,
             totalBuyerFeeBasisPoints,
-            sellerBountyBasisPoints } = await this.computeFees({ asset: openSeaAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
+            sellerBountyBasisPoints } = await this.computeFees({ asset: swappableAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
 
     const { target, calldata, replacementPattern } = encodeSell(schema, wyAsset, accountAddress)
 
@@ -2017,7 +2017,7 @@ export class OpenSeaPort {
       feeMethod
     } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, waitForHighestBid, sellerBountyBasisPoints)
 
-    const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: openSeaAsset, useTxnOriginStaticCall: waitForHighestBid })
+    const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: waitForHighestBid })
 
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
@@ -2056,7 +2056,7 @@ export class OpenSeaPort {
 
   public async _getStaticCallTargetAndExtraData(
       { asset, useTxnOriginStaticCall }:
-      { asset: OpenSeaAsset;
+      { asset: SwappableAsset;
         useTxnOriginStaticCall: boolean; }
     ): Promise<{
       staticTarget: string;
@@ -2342,7 +2342,7 @@ export class OpenSeaPort {
     const times = this._getTimeParameters(0)
     // Compat for matching buy orders that have fee recipient still on them
     const feeRecipient = order.feeRecipient == NULL_ADDRESS
-      ? OPENSEA_FEE_RECIPIENT
+      ? SWAPPABLE_FEE_RECIPIENT
       : NULL_ADDRESS
 
     const matchingOrder: UnhashedOrder = {
@@ -2750,7 +2750,7 @@ export class OpenSeaPort {
       makerProtocolFee: makeBigNumber(0),
       takerProtocolFee: makeBigNumber(0),
       makerReferrerFee: makeBigNumber(0), // TODO use buyerBountyBPS
-      feeRecipient: OPENSEA_FEE_RECIPIENT,
+      feeRecipient: SWAPPABLE_FEE_RECIPIENT,
       feeMethod: FeeMethod.SplitFee
     }
   }
@@ -2761,7 +2761,7 @@ export class OpenSeaPort {
     // Use buyer as the maker when it's an English auction, so Wyvern sets prices correctly
     const feeRecipient = waitForHighestBid
       ? NULL_ADDRESS
-      : OPENSEA_FEE_RECIPIENT
+      : SWAPPABLE_FEE_RECIPIENT
 
     // Swap maker/taker fees when it's an English auction,
     // since these sell orders are takers not makers
@@ -2987,7 +2987,7 @@ export class OpenSeaPort {
 
     } catch (error) {
       console.error(`Failed atomic match with args: `, args, error)
-      throw new Error(`Oops, the Ethereum network rejected this transaction :( The OpenSea devs have been alerted, but this problem is typically due an item being locked or untransferrable. The exact error was "${error.message.substr(0, MAX_ERROR_LENGTH)}..."`)
+      throw new Error(`Oops, the Ethereum network rejected this transaction :( The Swappable devs have been alerted, but this problem is typically due an item being locked or untransferrable. The exact error was "${error.message.substr(0, MAX_ERROR_LENGTH)}..."`)
     }
 
     // Then do the transaction
