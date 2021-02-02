@@ -52,4 +52,4 @@ export const SITE_HOST_RINKEBY = 'https://rinkeby.opensea.io'
 export const ORDERBOOK_PATH = `/wyvern/v${ORDERBOOK_VERSION}`
 export const API_PATH = `/api/v${ORDERBOOK_VERSION}`
 export const SWAP_TOKEN_ADDRESS = '0xCC4304A31d09258b0029eA7FE63d032f52e44EFe'
-export const SWAP_TOKEN_RINKEBY_ADDRESS = WyvernProtocol.NULL_ADDRESS  // TODO: Deploy this
+export const SWAP_TOKEN_RINKEBY_ADDRESS = '0xCB75c9e9b636a4FEe33ED9Da52AEFae67BB4218c'  // TODO: Deploy this

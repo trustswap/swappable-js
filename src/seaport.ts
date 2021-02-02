@@ -1588,8 +1588,8 @@ export class SwappablePort {
 
     const isMainnet = this._networkName == Network.Main
     const isPaymentInSwap = (isMainnet ? paymentTokenAddress == SWAP_TOKEN_ADDRESS : paymentTokenAddress == SWAP_TOKEN_RINKEBY_ADDRESS)
-    let swappableBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
-    let swappableSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
+    let openseaBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
+    let openseaSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
     let devBuyerFeeBasisPoints = 0
     let devSellerFeeBasisPoints = 0
     let transferFee = makeBigNumber(0)
@@ -1597,12 +1597,12 @@ export class SwappablePort {
     let maxTotalBountyBPS = DEFAULT_MAX_BOUNTY
 
     if (asset) {
-      swappableBuyerFeeBasisPoints = +asset.collection.swappableBuyerFeeBasisPoints
-      swappableSellerFeeBasisPoints = +asset.collection.swappableSellerFeeBasisPoints
+      openseaBuyerFeeBasisPoints = +asset.collection.openseaBuyerFeeBasisPoints
+      openseaSellerFeeBasisPoints = +asset.collection.openseaSellerFeeBasisPoints
       devBuyerFeeBasisPoints = +asset.collection.devBuyerFeeBasisPoints
       devSellerFeeBasisPoints = +asset.collection.devSellerFeeBasisPoints
 
-      maxTotalBountyBPS = swappableSellerFeeBasisPoints
+      maxTotalBountyBPS = openseaSellerFeeBasisPoints
     }
 
     // Compute transferFrom fees
@@ -1643,18 +1643,18 @@ export class SwappablePort {
 
     // Remove fees for private orders
     if (isPrivate) {
-      swappableBuyerFeeBasisPoints = 0
-      swappableSellerFeeBasisPoints = 0
+      openseaBuyerFeeBasisPoints = 0
+      openseaSellerFeeBasisPoints = 0
       devBuyerFeeBasisPoints = 0
       devSellerFeeBasisPoints = 0
       sellerBountyBasisPoints = 0
     }
 
     return {
-      totalBuyerFeeBasisPoints: swappableBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
-      totalSellerFeeBasisPoints: swappableSellerFeeBasisPoints + devSellerFeeBasisPoints,
-      swappableBuyerFeeBasisPoints,
-      swappableSellerFeeBasisPoints,
+      totalBuyerFeeBasisPoints: openseaBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
+      totalSellerFeeBasisPoints: openseaSellerFeeBasisPoints + devSellerFeeBasisPoints,
+      openseaBuyerFeeBasisPoints,
+      openseaSellerFeeBasisPoints,
       devBuyerFeeBasisPoints,
       devSellerFeeBasisPoints,
       sellerBountyBasisPoints,

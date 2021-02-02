@@ -518,9 +518,9 @@ export interface SwappableAssetBundleQuery extends Partial<SwappableAssetBundleJ
  */
 export interface SwappableFees {
   // Fee for Swappable levied on sellers
-  swappableSellerFeeBasisPoints: number
+  openseaSellerFeeBasisPoints: number
   // Fee for Swappable levied on buyers
-  swappableBuyerFeeBasisPoints: number
+  openseaBuyerFeeBasisPoints: number
   // Fee for the collection owner levied on sellers
   devSellerFeeBasisPoints: number
   // Fee for the collection owner levied on buyers
