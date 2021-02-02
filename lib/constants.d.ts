@@ -50,4 +50,4 @@ export declare const SITE_HOST_RINKEBY = "https://rinkeby.opensea.io";
 export declare const ORDERBOOK_PATH: string;
 export declare const API_PATH: string;
 export declare const SWAP_TOKEN_ADDRESS = "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe";
-export declare const SWAP_TOKEN_RINKEBY_ADDRESS: string;
+export declare const SWAP_TOKEN_RINKEBY_ADDRESS = "0xCB75c9e9b636a4FEe33ED9Da52AEFae67BB4218c";

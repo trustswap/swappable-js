@@ -354,8 +354,8 @@ export interface SwappableAssetBundleQuery extends Partial<SwappableAssetBundleJ
  * The basis point values of each type of fee
  */
 export interface SwappableFees {
-    swappableSellerFeeBasisPoints: number;
-    swappableBuyerFeeBasisPoints: number;
+    openseaSellerFeeBasisPoints: number;
+    openseaBuyerFeeBasisPoints: number;
     devSellerFeeBasisPoints: number;
     devBuyerFeeBasisPoints: number;
 }
