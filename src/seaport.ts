@@ -1597,12 +1597,12 @@ export class SwappablePort {
     let maxTotalBountyBPS = DEFAULT_MAX_BOUNTY
 
     if (asset) {
-      openseaBuyerFeeBasisPoints = +asset.collection.openseaBuyerFeeBasisPoints
-      openseaSellerFeeBasisPoints = +asset.collection.openseaSellerFeeBasisPoints
+      openseaBuyerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.openseaBuyerFeeBasisPoints/2) : (+asset.collection.openseaBuyerFeeBasisPoints)
+      openseaSellerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.openseaSellerFeeBasisPoints/2) : (+asset.collection.openseaSellerFeeBasisPoints)
       devBuyerFeeBasisPoints = +asset.collection.devBuyerFeeBasisPoints
       devSellerFeeBasisPoints = +asset.collection.devSellerFeeBasisPoints
 
-      maxTotalBountyBPS = openseaSellerFeeBasisPoints
+      maxTotalBountyBPS = +asset.collection.openseaSellerFeeBasisPoints
     }
 
     // Compute transferFrom fees
