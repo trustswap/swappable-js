@@ -1588,8 +1588,8 @@ export class SwappablePort {
 
     const isMainnet = this._networkName == Network.Main
     const isPaymentInSwap = (isMainnet ? paymentTokenAddress == SWAP_TOKEN_ADDRESS : paymentTokenAddress == SWAP_TOKEN_RINKEBY_ADDRESS)
-    let openseaBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
-    let openseaSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
+    let swappableBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
+    let swappableSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
     let devBuyerFeeBasisPoints = 0
     let devSellerFeeBasisPoints = 0
     let transferFee = makeBigNumber(0)
@@ -1597,12 +1597,12 @@ export class SwappablePort {
     let maxTotalBountyBPS = DEFAULT_MAX_BOUNTY
 
     if (asset) {
-      openseaBuyerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.openseaBuyerFeeBasisPoints/2) : (+asset.collection.openseaBuyerFeeBasisPoints)
-      openseaSellerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.openseaSellerFeeBasisPoints/2) : (+asset.collection.openseaSellerFeeBasisPoints)
+      swappableBuyerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.swappableBuyerFeeBasisPoints / 2) : (+asset.collection.swappableBuyerFeeBasisPoints)
+      swappableSellerFeeBasisPoints = isPaymentInSwap ? (+asset.collection.swappableSellerFeeBasisPoints / 2) : (+asset.collection.swappableSellerFeeBasisPoints)
       devBuyerFeeBasisPoints = +asset.collection.devBuyerFeeBasisPoints
       devSellerFeeBasisPoints = +asset.collection.devSellerFeeBasisPoints
 
-      maxTotalBountyBPS = +asset.collection.openseaSellerFeeBasisPoints
+      maxTotalBountyBPS = +asset.collection.swappableSellerFeeBasisPoints
     }
 
     // Compute transferFrom fees
@@ -1643,18 +1643,18 @@ export class SwappablePort {
 
     // Remove fees for private orders
     if (isPrivate) {
-      openseaBuyerFeeBasisPoints = 0
-      openseaSellerFeeBasisPoints = 0
+      swappableBuyerFeeBasisPoints = 0
+      swappableSellerFeeBasisPoints = 0
       devBuyerFeeBasisPoints = 0
       devSellerFeeBasisPoints = 0
       sellerBountyBasisPoints = 0
     }
 
     return {
-      totalBuyerFeeBasisPoints: openseaBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
-      totalSellerFeeBasisPoints: openseaSellerFeeBasisPoints + devSellerFeeBasisPoints,
-      openseaBuyerFeeBasisPoints,
-      openseaSellerFeeBasisPoints,
+      totalBuyerFeeBasisPoints: swappableBuyerFeeBasisPoints + devBuyerFeeBasisPoints,
+      totalSellerFeeBasisPoints: swappableSellerFeeBasisPoints + devSellerFeeBasisPoints,
+      swappableBuyerFeeBasisPoints,
+      swappableSellerFeeBasisPoints,
       devBuyerFeeBasisPoints,
       devSellerFeeBasisPoints,
       sellerBountyBasisPoints,
