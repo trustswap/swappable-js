@@ -54,5 +54,5 @@ export const SITE_HOST_MAINNET = 'https://swappable.io'
 export const SITE_HOST_RINKEBY = 'http://swappable-testnet.trustswap.org:8000'
 export const ORDERBOOK_PATH = `/wyvern/v${ORDERBOOK_VERSION}`
 export const API_PATH = `/api/v${ORDERBOOK_VERSION}`
-export const SWAP_TOKEN_ADDRESS = '0xCC4304A31d09258b0029eA7FE63d032f52e44EFe'
-export const SWAP_TOKEN_RINKEBY_ADDRESS = '0xF77EC971b04cb13Ba20fCdE023Be3E7617A3eB8E'
+export const SWAP_TOKEN_ADDRESS = '0xcc4304a31d09258b0029ea7fe63d032f52e44efe'
+export const SWAP_TOKEN_RINKEBY_ADDRESS = '0xf77ec971b04cb13ba20fcde023be3e7617a3eb8e'

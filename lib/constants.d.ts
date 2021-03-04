@@ -49,5 +49,5 @@ export declare const SITE_HOST_MAINNET = "https://swappable.io";
 export declare const SITE_HOST_RINKEBY = "http://swappable-testnet.trustswap.org:8000";
 export declare const ORDERBOOK_PATH: string;
 export declare const API_PATH: string;
-export declare const SWAP_TOKEN_ADDRESS = "0xCC4304A31d09258b0029eA7FE63d032f52e44EFe";
-export declare const SWAP_TOKEN_RINKEBY_ADDRESS = "0xF77EC971b04cb13Ba20fCdE023Be3E7617A3eB8E";
+export declare const SWAP_TOKEN_ADDRESS = "0xcc4304a31d09258b0029ea7fe63d032f52e44efe";
+export declare const SWAP_TOKEN_RINKEBY_ADDRESS = "0xf77ec971b04cb13ba20fcde023be3e7617a3eb8e";

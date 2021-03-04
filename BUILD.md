@@ -10,4 +10,5 @@
     npm install
     cd src
     tsc
+    cd ../
     git checkout lib/abi
