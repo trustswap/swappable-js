@@ -907,6 +907,20 @@ export class SwappablePort {
     return transactionHash
   }
 
+  public async atomicMatch(
+    { buy, sell, accountAddress, metadata = NULL_BLOCK_HASH }:
+    { buy: Order; sell: Order; accountAddress: string; metadata?: string }
+  ): Promise<string> {
+    const transactionHash = await this._atomicMatch({ buy, sell, accountAddress, metadata })
+
+    await this._confirmTransaction(transactionHash, EventType.MatchOrders, "Fulfilling order", async () => {
+      const isOpen = await this._validateOrder(sell)
+      return !isOpen
+    })
+
+    return transactionHash
+  }
+
   /**
    * Cancel an order on-chain, preventing it from ever being fulfilled.
    * @param param0 __namedParameters Object
