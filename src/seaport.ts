@@ -2846,7 +2846,7 @@ export class SwappablePort {
       expirationTimestamp = expirationTimestamp + ORDER_MATCHING_LATENCY_SECONDS
     } else {
       // Small offset to account for latency
-      listingTimestamp = Math.round(Date.now() / 1000 - 100)
+      listingTimestamp = Math.round((Date.now() - 100) / 1000)
     }
 
     return {
