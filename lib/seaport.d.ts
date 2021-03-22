@@ -310,6 +310,12 @@ export declare class SwappablePort {
         recipientAddress?: string;
         referrerAddress?: string;
     }): Promise<string>;
+    atomicMatch({ buy, sell, accountAddress, metadata }: {
+        buy: Order;
+        sell: Order;
+        accountAddress: string;
+        metadata?: string;
+    }): Promise<string>;
     /**
      * Cancel an order on-chain, preventing it from ever being fulfilled.
      * @param param0 __namedParameters Object
