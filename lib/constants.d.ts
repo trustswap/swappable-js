@@ -9,7 +9,7 @@ export declare const RINKEBY_PROVIDER_URL = "https://rinkeby.infura.io/v3/8fa63c
 export declare const INVERSE_BASIS_POINT = 10000;
 export declare const MAX_UINT_256: BigNumber;
 export declare const WYVERN_EXCHANGE_ADDRESS_MAINNET = "0x7be8076f4ea4a4ad08075c2508e481d6c946d12b";
-export declare const WYVERN_EXCHANGE_ADDRESS_RINKEBY = "0x8F0b3651370731A5330370734290d50aF1F71eb9";
+export declare const WYVERN_EXCHANGE_ADDRESS_RINKEBY = "0x1f7D4bB881603c08C66520cab1978DCBC5D86C8f";
 export declare const ENJIN_COIN_ADDRESS = "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c";
 export declare const MANA_ADDRESS = "0x0f5d2fb29fb7d3cfee444a200298f468908cc942";
 export declare const ENJIN_ADDRESS = "0xfaaFDc07907ff5120a76b34b731b278c38d6043C";
