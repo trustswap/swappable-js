@@ -45,8 +45,8 @@
     "query-string": "^6.11.1",
     "web3": "0.20.7",
     "webpack": "^3.10.0",
-    "wyvern-js": "git+https://github.com/knackroot-technolabs-llp/wyvern-js.git#deployment",
-    "wyvern-schemas": "git+https://github.com/knackroot-technolabs-llp/wyvern-schemas.git#v0.11.1"
+    "wyvern-js": "git+https://github.com/trustswap/wyvern-js.git#deployment",
+    "wyvern-schemas": "git+https://github.com/trustswap/wyvern-schemas.git#v0.11.1"
   },
   "husky": {
     "hooks": {
