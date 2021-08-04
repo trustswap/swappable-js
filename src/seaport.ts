@@ -892,7 +892,8 @@ export class SwappablePort {
     const matchingOrder = this._makeMatchingOrder({
       order,
       accountAddress,
-      recipientAddress: recipientAddress || accountAddress
+      recipientAddress: recipientAddress || accountAddress,
+      devPayoutAddress: order.asset?.collection.payoutAddress 
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
@@ -1272,7 +1273,8 @@ export class SwappablePort {
     const matchingOrder = this._makeMatchingOrder({
       order,
       accountAddress,
-      recipientAddress: recipientAddress || accountAddress
+      recipientAddress: recipientAddress || accountAddress,
+      devPayoutAddress: order.asset?.collection.payoutAddress 
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
@@ -1930,7 +1932,11 @@ export class SwappablePort {
 
     const {
       totalBuyerFeeBasisPoints,
-      totalSellerFeeBasisPoints
+      totalSellerFeeBasisPoints,
+      swappableBuyerFeeBasisPoints,
+      swappableSellerFeeBasisPoints,
+      devBuyerFeeBasisPoints,
+      devSellerFeeBasisPoints
     } = await this.computeFees({ asset: swappableAsset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
 
     const {
@@ -1941,7 +1947,7 @@ export class SwappablePort {
       makerReferrerFee,
       feeRecipient,
       feeMethod
-    } = this._getBuyFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, sellOrder)
+    } = this._getBuyFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, swappableAsset?.collection.payoutAddress , sellOrder)
 
     const { target, calldata, replacementPattern } = encodeBuy(schema, wyAsset, accountAddress)
 
@@ -2010,7 +2016,12 @@ export class SwappablePort {
 
     const { totalSellerFeeBasisPoints,
             totalBuyerFeeBasisPoints,
-            sellerBountyBasisPoints } = await this.computeFees({ asset: swappableAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
+            swappableBuyerFeeBasisPoints,
+            swappableSellerFeeBasisPoints,
+            devBuyerFeeBasisPoints,
+            devSellerFeeBasisPoints,
+            sellerBountyBasisPoints
+          } = await this.computeFees({ asset: swappableAsset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
 
     const { target, calldata, replacementPattern } = encodeSell(schema, wyAsset, accountAddress)
 
@@ -2029,7 +2040,7 @@ export class SwappablePort {
       makerReferrerFee,
       feeRecipient,
       feeMethod
-    } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, waitForHighestBid, sellerBountyBasisPoints)
+    } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, waitForHighestBid, swappableAsset?.collection.payoutAddress , sellerBountyBasisPoints)
 
     const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: waitForHighestBid })
 
@@ -2172,7 +2183,12 @@ export class SwappablePort {
       ? await this.api.getAsset(assets[0])
       : undefined
     const { totalBuyerFeeBasisPoints,
-            totalSellerFeeBasisPoints } = await this.computeFees({ asset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
+            totalSellerFeeBasisPoints,
+            swappableBuyerFeeBasisPoints,
+            swappableSellerFeeBasisPoints,
+            devBuyerFeeBasisPoints,
+            devSellerFeeBasisPoints
+          } = await this.computeFees({ asset, extraBountyBasisPoints, side: OrderSide.Buy, paymentTokenAddress })
 
     const {
       makerRelayerFee,
@@ -2182,7 +2198,7 @@ export class SwappablePort {
       makerReferrerFee,
       feeRecipient,
       feeMethod
-    } = this._getBuyFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, sellOrder)
+    } = this._getBuyFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, asset?.collection.payoutAddress , sellOrder)
 
     const { calldata, replacementPattern } = encodeAtomicizedBuy(orderedSchemas, bundle.assets, accountAddress, this._wyvernProtocol, this._networkName)
 
@@ -2259,7 +2275,12 @@ export class SwappablePort {
     const {
       totalSellerFeeBasisPoints,
       totalBuyerFeeBasisPoints,
-      sellerBountyBasisPoints } = await this.computeFees({ asset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
+      swappableBuyerFeeBasisPoints,
+      swappableSellerFeeBasisPoints,
+      devBuyerFeeBasisPoints,
+      devSellerFeeBasisPoints,
+      sellerBountyBasisPoints
+    } = await this.computeFees({ asset, side: OrderSide.Sell, isPrivate, extraBountyBasisPoints, paymentTokenAddress })
 
     const { calldata, replacementPattern } = encodeAtomicizedSell(orderedSchemas, bundle.assets, accountAddress, this._wyvernProtocol, this._networkName)
 
@@ -2277,7 +2298,7 @@ export class SwappablePort {
       takerProtocolFee,
       makerReferrerFee,
       feeRecipient
-    } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, waitForHighestBid, sellerBountyBasisPoints)
+    } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, waitForHighestBid, asset?.collection.payoutAddress , sellerBountyBasisPoints)
 
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
@@ -2314,10 +2335,11 @@ export class SwappablePort {
   }
 
   public _makeMatchingOrder(
-      { order, accountAddress, recipientAddress }:
+      { order, accountAddress, recipientAddress, devPayoutAddress }:
       { order: UnsignedOrder;
         accountAddress: string;
-        recipientAddress: string; }
+        recipientAddress: string;
+        devPayoutAddress?: string; }
     ): UnsignedOrder {
 
     accountAddress = validateAndFormatWalletAddress(this.web3, accountAddress)
@@ -2355,9 +2377,12 @@ export class SwappablePort {
     const { target, calldata, replacementPattern } = computeOrderParams()
     const times = this._getTimeParameters(0)
     // Compat for matching buy orders that have fee recipient still on them
+    console.log("🚀 ~ file: seaport.ts ~ line 2381 ~ SwappablePort ~ order.feeRecipient", order.feeRecipient)
     const feeRecipient = order.feeRecipient == NULL_ADDRESS
-      ? SWAPPABLE_FEE_RECIPIENT
-      : NULL_ADDRESS
+    ? devPayoutAddress || SWAPPABLE_FEE_RECIPIENT
+    : NULL_ADDRESS
+    console.log("🚀 ~ file: seaport.ts ~ line 2382 ~ SwappablePort ~ feeRecipient", feeRecipient)
+    console.log("🚀 ~ file: seaport.ts ~ line 2421 ~ SwappablePort ~ devPayoutAddress", devPayoutAddress)
 
     const matchingOrder: UnhashedOrder = {
       exchange: order.exchange,
@@ -2735,12 +2760,19 @@ export class SwappablePort {
     return false
   }
 
-  public _getBuyFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, sellOrder?: UnhashedOrder) {
+  public _getBuyFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, swappableBuyerFeeBasisPoints: number, swappableSellerFeeBasisPoints: number, devBuyerFeeBasisPoints: number, devSellerFeeBasisPoints: number, devPayoutAddress?: string, sellOrder?: UnhashedOrder) {
 
     this._validateFees(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints)
 
+    // dev fees will be set on Relayer Fee and dev payout address will be set on feeRecipient
+    // the platform fee will be set on Protocol Fee
+    // The Fixed Payout address of platform fee will be directly configured in wyvren contract
+
+    const feeRecipient = devPayoutAddress || SWAPPABLE_FEE_RECIPIENT
     let makerRelayerFee
     let takerRelayerFee
+    let makerProtocolFee
+    let takerProtocolFee
 
     if (sellOrder) {
       // Use the sell order's fees to ensure compatiblity and force the order
@@ -2753,44 +2785,67 @@ export class SwappablePort {
       takerRelayerFee = sellOrder.waitingForBestCounterOrder
         ? makeBigNumber(sellOrder.takerRelayerFee)
         : makeBigNumber(sellOrder.makerRelayerFee)
+
+      makerProtocolFee = sellOrder.waitingForBestCounterOrder
+        ? makeBigNumber(sellOrder.makerProtocolFee)
+        : makeBigNumber(sellOrder.takerProtocolFee)
+      takerProtocolFee = sellOrder.waitingForBestCounterOrder
+        ? makeBigNumber(sellOrder.takerProtocolFee)
+        : makeBigNumber(sellOrder.makerProtocolFee)
     } else {
-      makerRelayerFee = makeBigNumber(totalBuyerFeeBasisPoints)
-      takerRelayerFee = makeBigNumber(totalSellerFeeBasisPoints)
+      makerRelayerFee = makeBigNumber(devBuyerFeeBasisPoints)
+      takerRelayerFee = makeBigNumber(devSellerFeeBasisPoints)
+
+      makerProtocolFee = makeBigNumber(swappableBuyerFeeBasisPoints)
+      takerProtocolFee = makeBigNumber(swappableSellerFeeBasisPoints)
     }
 
     return {
       makerRelayerFee,
       takerRelayerFee,
-      makerProtocolFee: makeBigNumber(0),
-      takerProtocolFee: makeBigNumber(0),
+      makerProtocolFee,
+      takerProtocolFee,
       makerReferrerFee: makeBigNumber(0), // TODO use buyerBountyBPS
-      feeRecipient: SWAPPABLE_FEE_RECIPIENT,
+      feeRecipient,
       feeMethod: FeeMethod.SplitFee
     }
   }
 
-  public _getSellFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, waitForHighestBid: boolean, sellerBountyBasisPoints = 0) {
+  public _getSellFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, swappableBuyerFeeBasisPoints: number, swappableSellerFeeBasisPoints: number, devBuyerFeeBasisPoints: number, devSellerFeeBasisPoints: number, waitForHighestBid: boolean, devPayoutAddress?: string, sellerBountyBasisPoints = 0) {
 
     this._validateFees(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints)
+
+    // dev fees will be set on Relayer Fee and dev payout address will be set on feeRecipient
+    // the platform fee will be set on Protocol Fee
+    // The Fixed Payout address of platform fee will be directly configured in wyvren contract
+
     // Use buyer as the maker when it's an English auction, so Wyvern sets prices correctly
     const feeRecipient = waitForHighestBid
       ? NULL_ADDRESS
-      : SWAPPABLE_FEE_RECIPIENT
+      : devPayoutAddress || SWAPPABLE_FEE_RECIPIENT
 
     // Swap maker/taker fees when it's an English auction,
     // since these sell orders are takers not makers
     const makerRelayerFee = waitForHighestBid
-      ? makeBigNumber(totalBuyerFeeBasisPoints)
-      : makeBigNumber(totalSellerFeeBasisPoints)
+      ? makeBigNumber(devBuyerFeeBasisPoints)
+      : makeBigNumber(devSellerFeeBasisPoints)
     const takerRelayerFee = waitForHighestBid
-      ? makeBigNumber(totalSellerFeeBasisPoints)
-      : makeBigNumber(totalBuyerFeeBasisPoints)
+      ? makeBigNumber(devSellerFeeBasisPoints)
+      : makeBigNumber(devBuyerFeeBasisPoints)
+
+    const makerProtocolFee = waitForHighestBid
+      ? makeBigNumber(swappableBuyerFeeBasisPoints)
+      : makeBigNumber(swappableSellerFeeBasisPoints)
+
+    const takerProtocolFee = waitForHighestBid
+      ? makeBigNumber(swappableSellerFeeBasisPoints)
+      : makeBigNumber(swappableBuyerFeeBasisPoints)
 
     return {
       makerRelayerFee,
       takerRelayerFee,
-      makerProtocolFee: makeBigNumber(0),
-      takerProtocolFee: makeBigNumber(0),
+      makerProtocolFee,
+      takerProtocolFee,
       makerReferrerFee: makeBigNumber(sellerBountyBasisPoints),
       feeRecipient,
       feeMethod: FeeMethod.SplitFee
