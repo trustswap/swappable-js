@@ -661,10 +661,11 @@ export declare class SwappablePort {
         extraBountyBasisPoints: number;
         buyerAddress: string;
     }): Promise<UnhashedOrder>;
-    _makeMatchingOrder({ order, accountAddress, recipientAddress }: {
+    _makeMatchingOrder({ order, accountAddress, recipientAddress, devPayoutAddress }: {
         order: UnsignedOrder;
         accountAddress: string;
         recipientAddress: string;
+        devPayoutAddress?: string;
     }): UnsignedOrder;
     /**
      * Validate against Wyvern that a buy and sell order can match
@@ -723,7 +724,7 @@ export declare class SwappablePort {
         wyAsset: WyvernAsset;
         schemaName: WyvernSchemaName;
     }): Promise<boolean>;
-    _getBuyFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, sellOrder?: UnhashedOrder): {
+    _getBuyFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, swappableBuyerFeeBasisPoints: number, swappableSellerFeeBasisPoints: number, devBuyerFeeBasisPoints: number, devSellerFeeBasisPoints: number, devPayoutAddress?: string, sellOrder?: UnhashedOrder): {
         makerRelayerFee: BigNumber;
         takerRelayerFee: BigNumber;
         makerProtocolFee: BigNumber;
@@ -732,7 +733,7 @@ export declare class SwappablePort {
         feeRecipient: string;
         feeMethod: FeeMethod;
     };
-    _getSellFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, waitForHighestBid: boolean, sellerBountyBasisPoints?: number): {
+    _getSellFeeParameters(totalBuyerFeeBasisPoints: number, totalSellerFeeBasisPoints: number, swappableBuyerFeeBasisPoints: number, swappableSellerFeeBasisPoints: number, devBuyerFeeBasisPoints: number, devSellerFeeBasisPoints: number, waitForHighestBid: boolean, devPayoutAddress?: string, sellerBountyBasisPoints?: number): {
         makerRelayerFee: BigNumber;
         takerRelayerFee: BigNumber;
         makerProtocolFee: BigNumber;
