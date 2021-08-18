@@ -4,13 +4,13 @@ import { BigNumber } from 'bignumber.js' // Typescript import issue
 export const DEFAULT_GAS_INCREASE_FACTOR = 1.01
 export const NULL_ADDRESS = WyvernProtocol.NULL_ADDRESS
 export const NULL_BLOCK_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
-export const SWAPPABLE_FEE_RECIPIENT = '0x71DFF38eDa9F7b90C45C5c009B131300E9bd7f6F'
+export const SWAPPABLE_FEE_RECIPIENT = '0x5869D1eE6D0917B786188547788566B25283Ff6B'
 export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const INVERSE_BASIS_POINT = 10000
 export const MAX_UINT_256 = WyvernProtocol.MAX_UINT_256
-export const WYVERN_EXCHANGE_ADDRESS_MAINNET = '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b'
+export const WYVERN_EXCHANGE_ADDRESS_MAINNET = '0x097ffeea86b38fa9ebad4bc2af902e3ba4fffee4'
 export const WYVERN_EXCHANGE_ADDRESS_RINKEBY = '0xc9a5Ba3C629F21e896F0B444B18cCF6a844ea606'
 export const ENJIN_COIN_ADDRESS = '0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c'
 export const MANA_ADDRESS = '0x0f5d2fb29fb7d3cfee444a200298f468908cc942'
@@ -31,8 +31,7 @@ export const CHEEZE_WIZARDS_BASIC_TOURNAMENT_ADDRESS = WyvernProtocol.NULL_ADDRE
 export const CHEEZE_WIZARDS_BASIC_TOURNAMENT_RINKEBY_ADDRESS = '0x8852f5F7d1BB867AAf8fdBB0851Aa431d1df5ca1'
 export const DECENTRALAND_ESTATE_ADDRESS = '0x959e104e1a4db6317fa58f8295f586e1a978c297'
 
-// TODO RP deploy this contracts
-export const STATIC_CALL_TX_ORIGIN_ADDRESS = '0xbff6ade67e3717101dd8d0a7f3de1bf6623a2ba8'.toLowerCase()
+export const STATIC_CALL_TX_ORIGIN_ADDRESS = '0xf20b2647679d32ff36dcd17fe4ffa5661ef79e7b'.toLowerCase()
 export const STATIC_CALL_TX_ORIGIN_RINKEBY_ADDRESS = '0x5fdce57c22497440843ab66fb1275a6988f6f7d9'.toLowerCase()
 export const STATIC_CALL_CHEEZE_WIZARDS_ADDRESS = WyvernProtocol.NULL_ADDRESS  // TODO: Deploy this address once Dapper has deployed their mainnet contracts
 export const STATIC_CALL_CHEEZE_WIZARDS_RINKEBY_ADDRESS = '0x8a640bdf8886dd6ca1fad9f22382b50deeacde08'
