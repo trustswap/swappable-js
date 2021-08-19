@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js' // Typescript import issue
 export const DEFAULT_GAS_INCREASE_FACTOR = 1.01
 export const NULL_ADDRESS = WyvernProtocol.NULL_ADDRESS
 export const NULL_BLOCK_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
-export const SWAPPABLE_FEE_RECIPIENT = '0x5869D1eE6D0917B786188547788566B25283Ff6B'
+export const SWAPPABLE_FEE_RECIPIENT = '0x5869d1ee6d0917b786188547788566b25283ff6b'
 export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'

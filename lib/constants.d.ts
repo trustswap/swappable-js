@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 export declare const DEFAULT_GAS_INCREASE_FACTOR = 1.01;
 export declare const NULL_ADDRESS: string;
 export declare const NULL_BLOCK_HASH = "0x0000000000000000000000000000000000000000000000000000000000000000";
-export declare const SWAPPABLE_FEE_RECIPIENT = "0x5869D1eE6D0917B786188547788566B25283Ff6B";
+export declare const SWAPPABLE_FEE_RECIPIENT = "0x5869d1ee6d0917b786188547788566b25283ff6b";
 export declare const DEP_INFURA_KEY = "8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const MAINNET_PROVIDER_URL = "https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const RINKEBY_PROVIDER_URL = "https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
