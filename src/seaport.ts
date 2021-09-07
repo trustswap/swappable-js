@@ -75,7 +75,11 @@ import {
   ENJIN_COIN_ADDRESS,
   MANA_ADDRESS,
   SWAP_TOKEN_ADDRESS,
-  SWAP_TOKEN_RINKEBY_ADDRESS
+  SWAP_TOKEN_RINKEBY_ADDRESS,
+  MATIC_PROVIDER_URL,
+  MUMBAI_PROVIDER_URL,
+  STATIC_CALL_TX_ORIGIN_MATIC_ADDRESS,
+  STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS
 } from './constants'
 
 export class SwappablePort {
@@ -117,8 +121,20 @@ export class SwappablePort {
     this.api = new SwappableAPI(apiConfig)
 
     this._networkName = apiConfig.networkName
-
-    const readonlyProvider = new Web3.providers.HttpProvider(this._networkName == Network.Main ? MAINNET_PROVIDER_URL : RINKEBY_PROVIDER_URL)
+    let providerURL = RINKEBY_PROVIDER_URL;
+    switch (this._networkName) {
+      case Network.Mumbai:
+        providerURL = MUMBAI_PROVIDER_URL
+        break
+      case Network.Main:
+        providerURL = MAINNET_PROVIDER_URL
+        break
+      case Network.Matic:
+        providerURL = MATIC_PROVIDER_URL
+      default:
+        break
+    }
+    const readonlyProvider = new Web3.providers.HttpProvider(providerURL)
 
     // Web3 Config
     this.web3 = new Web3(provider)
@@ -2092,7 +2108,7 @@ export class SwappablePort {
         CHEEZE_WIZARDS_GUILD_RINKEBY_ADDRESS.toLowerCase()
       ].includes(asset.tokenAddress.toLowerCase())
     const isDecentralandEstate = asset.tokenAddress.toLowerCase() == DECENTRALAND_ESTATE_ADDRESS.toLowerCase()
-    const isMainnet = this._networkName == Network.Main
+    const isMainnet = ( this._networkName == Network.Main || this._networkName == Network.Matic )
 
     if (isMainnet && !useTxnOriginStaticCall) {
       // While testing, we will use dummy values for mainnet. We will remove this if-statement once we have pushed the PR once and tested on Rinkeby
@@ -2138,10 +2154,21 @@ export class SwappablePort {
           [asset.tokenId, estateFingerprint, useTxnOriginStaticCall]),
       }
     } else if (useTxnOriginStaticCall) {
+      let STATIC_CALL_TX_ADDRESS = STATIC_CALL_TX_ORIGIN_RINKEBY_ADDRESS;
+      switch (this._networkName) {
+        case Network.Mumbai:
+          STATIC_CALL_TX_ADDRESS = STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS
+          break
+        case Network.Main:
+          STATIC_CALL_TX_ADDRESS = STATIC_CALL_TX_ORIGIN_ADDRESS
+          break
+        case Network.Matic:
+          STATIC_CALL_TX_ADDRESS = STATIC_CALL_TX_ORIGIN_MATIC_ADDRESS
+        default:
+          break
+      }
       return {
-        staticTarget: isMainnet
-          ? STATIC_CALL_TX_ORIGIN_ADDRESS
-          : STATIC_CALL_TX_ORIGIN_RINKEBY_ADDRESS,
+        staticTarget: STATIC_CALL_TX_ADDRESS,
         staticExtradata: encodeCall(
           getMethod(StaticCheckTxOrigin, 'succeedIfTxOriginMatchesHardcodedAddress'),
           []),
