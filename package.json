@@ -46,7 +46,7 @@
     "web3": "0.20.7",
     "webpack": "^3.10.0",
     "wyvern-js": "git+ssh://github.com/trustswap/wyvern-js.git#master-matic",
-    "wyvern-schemas": "git+ssh://github.com/trustswap/wyvern-schemas.git#v0.11.1"
+    "wyvern-schemas": "git+ssh://github.com/trustswap/wyvern-schemas.git#master-matic-network"
   },
   "husky": {
     "hooks": {
