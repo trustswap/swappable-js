@@ -9,8 +9,8 @@ export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 
-export const MATIC_PROVIDER_URL = 'https://polygon-mainnet.infura.io/v3/5be289fc415a4171a205ae397226e696' // Matic Mainnet
-export const MUMBAI_PROVIDER_URL = 'https://polygon-mumbai.infura.io/v3/5be289fc415a4171a205ae397226e696' // Matic Testnet
+export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com/' // Matic Mainnet
+export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
 
 export const INVERSE_BASIS_POINT = 10000
 export const MAX_UINT_256 = WyvernProtocol.MAX_UINT_256
