@@ -62,10 +62,12 @@ export class SwappableAPI {
 
     switch (config.networkName) {
       case Network.Rinkeby:
+      case Network.Mumbai:
         this.apiBaseUrl = config.apiBaseUrl || API_BASE_RINKEBY
         this.hostUrl = SITE_HOST_RINKEBY
         break
       case Network.Main:
+      case Network.Matic:
       default:
         this.apiBaseUrl = config.apiBaseUrl || API_BASE_MAINNET
         this.hostUrl = SITE_HOST_MAINNET
