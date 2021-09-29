@@ -79,7 +79,9 @@ import {
   MATIC_PROVIDER_URL,
   MUMBAI_PROVIDER_URL,
   STATIC_CALL_TX_ORIGIN_MATIC_ADDRESS,
-  STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS
+  STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS,
+  SWAP_TOKEN_ADDRESS_MATIC_MAINNET,
+  SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
 } from './constants'
 
 export class SwappablePort {
@@ -1618,8 +1620,20 @@ export class SwappablePort {
         paymentTokenAddress: string }
     ): Promise<ComputedFees> {
 
-    const isMainnet = this._networkName == Network.Main
-    const isPaymentInSwap = (isMainnet ? paymentTokenAddress == SWAP_TOKEN_ADDRESS : paymentTokenAddress == SWAP_TOKEN_RINKEBY_ADDRESS)
+      let isPaymentInSwap = false;
+      switch (this._networkName) {
+        case Network.Mumbai:
+          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
+          break
+        case Network.Main:
+          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS
+          break
+        case Network.Matic:
+          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS_MATIC_MAINNET
+        default:
+          break
+      }
+
     let swappableBuyerFeeBasisPoints = DEFAULT_BUYER_FEE_BASIS_POINTS
     let swappableSellerFeeBasisPoints = (isPaymentInSwap ? DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP : DEFAULT_SELLER_FEE_BASIS_POINTS )
     let devBuyerFeeBasisPoints = 0
