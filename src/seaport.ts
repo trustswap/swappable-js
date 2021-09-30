@@ -1622,14 +1622,18 @@ export class SwappablePort {
 
       let isPaymentInSwap = false;
       switch (this._networkName) {
-        case Network.Mumbai:
-          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
-          break
         case Network.Main:
           isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS
           break
+        case Network.Rinkeby:
+          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_RINKEBY_ADDRESS
+          break
         case Network.Matic:
           isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS_MATIC_MAINNET
+          break
+        case Network.Mumbai:
+          isPaymentInSwap = paymentTokenAddress === SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
+          break
         default:
           break
       }
