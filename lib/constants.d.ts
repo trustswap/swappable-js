@@ -6,13 +6,13 @@ export declare const SWAPPABLE_FEE_RECIPIENT = "0x71DFF38eDa9F7b90C45C5c009B1313
 export declare const DEP_INFURA_KEY = "8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const MAINNET_PROVIDER_URL = "https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const RINKEBY_PROVIDER_URL = "https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
-export declare const MATIC_PROVIDER_URL = "https://rpc-mainnet.maticvigil.com/";
+export declare const MATIC_PROVIDER_URL = "https://rpc-mainnet.maticvigil.com";
 export declare const MUMBAI_PROVIDER_URL = "https://rpc-mumbai.maticvigil.com";
 export declare const INVERSE_BASIS_POINT = 10000;
 export declare const MAX_UINT_256: BigNumber;
 export declare const WYVERN_EXCHANGE_ADDRESS_MAINNET = "0x7be8076f4ea4a4ad08075c2508e481d6c946d12b";
 export declare const WYVERN_EXCHANGE_ADDRESS_RINKEBY = "0xc9a5Ba3C629F21e896F0B444B18cCF6a844ea606";
-export declare const WYVERN_EXCHANGE_ADDRESS_MATIC = "";
+export declare const WYVERN_EXCHANGE_ADDRESS_MATIC = "0x097ffeea86b38fa9ebad4bc2af902e3ba4fffee4";
 export declare const WYVERN_EXCHANGE_ADDRESS_MUMBAI = "0x31b49e94b0f5337d16b1f758991006838767294b";
 export declare const ENJIN_COIN_ADDRESS = "0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c";
 export declare const MANA_ADDRESS = "0x0f5d2fb29fb7d3cfee444a200298f468908cc942";
