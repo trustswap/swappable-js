@@ -9,7 +9,7 @@ export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 
-export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com/' // Matic Mainnet
+export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com' // Matic Mainnet
 export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
 
 export const INVERSE_BASIS_POINT = 10000
@@ -17,7 +17,7 @@ export const MAX_UINT_256 = WyvernProtocol.MAX_UINT_256
 export const WYVERN_EXCHANGE_ADDRESS_MAINNET = '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b'
 export const WYVERN_EXCHANGE_ADDRESS_RINKEBY = '0xc9a5Ba3C629F21e896F0B444B18cCF6a844ea606'
 
-export const WYVERN_EXCHANGE_ADDRESS_MATIC = ''
+export const WYVERN_EXCHANGE_ADDRESS_MATIC = '0x097ffeea86b38fa9ebad4bc2af902e3ba4fffee4'
 export const WYVERN_EXCHANGE_ADDRESS_MUMBAI = '0x31b49e94b0f5337d16b1f758991006838767294b'
 
 export const ENJIN_COIN_ADDRESS = '0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c'
