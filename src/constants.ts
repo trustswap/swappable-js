@@ -6,11 +6,11 @@ export const NULL_ADDRESS = WyvernProtocol.NULL_ADDRESS
 export const NULL_BLOCK_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 export const SWAPPABLE_FEE_RECIPIENT = '0x71DFF38eDa9F7b90C45C5c009B131300E9bd7f6F'
 export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
-export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
-export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
+export const MAINNET_PROVIDER_URL = 'https://delicate-icy-star.quiknode.pro/e54a865026fa047fbe3c00adf458a4fc72f9971c/'
+export const RINKEBY_PROVIDER_URL = 'https://lingering-small-violet.rinkeby.quiknode.pro/3caa287a204c323699bbd6cf90fc149d2b3f43ed/'
 
-export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com' // Matic Mainnet
-export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
+export const MATIC_PROVIDER_URL = 'https://lively-red-water.matic.quiknode.pro/615d435cf9b567d3d4691834866da30c22d1176d/' // Matic Mainnet
+export const MUMBAI_PROVIDER_URL = 'https://restless-snowy-violet.matic-testnet.quiknode.pro/775d8c4bcdcc416b63a6f6c037f74c80ac935877/' // Matic Testnet
 
 export const INVERSE_BASIS_POINT = 10000
 export const MAX_UINT_256 = WyvernProtocol.MAX_UINT_256
