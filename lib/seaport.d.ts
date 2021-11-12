@@ -706,6 +706,12 @@ export declare class SwappablePort {
         accountAddress: string;
         proxyAddress?: string;
     }): Promise<(string | null)[]>;
+    approveAll({ schemaNames, assets, accountAddress, proxyAddress }: {
+        schemaNames: WyvernSchemaName[];
+        assets: Asset[];
+        accountAddress: string;
+        proxyAddress?: string;
+    }): Promise<(string | null)[]>;
     _buyOrderValidationAndApprovals({ order, counterOrder, accountAddress }: {
         order: UnhashedOrder;
         counterOrder?: Order;

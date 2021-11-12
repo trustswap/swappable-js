@@ -2719,7 +2719,15 @@ export class SwappablePort {
       }
     }))
   }
-
+  public async approveAll({ schemaNames, assets, accountAddress, proxyAddress }:
+    { schemaNames: WyvernSchemaName[];
+      assets: Asset[];
+      accountAddress: string;
+      proxyAddress?: string }
+  ) {
+    const wyAssets = assets.map(asset => getWyvernAsset(this._getSchema(asset.schemaName), asset))
+    return await this._approveAll({schemaNames, wyAssets, accountAddress, proxyAddress})
+  }
   // Throws
   public async _buyOrderValidationAndApprovals(
       { order, counterOrder, accountAddress }:
