@@ -2092,6 +2092,12 @@ export class SwappablePort {
 
     const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: false })
 
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: [],
+      originFees: []
+    });
+
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
       maker: accountAddress,
@@ -2123,7 +2129,9 @@ export class SwappablePort {
         asset: wyAsset,
         schema: schema.name as WyvernSchemaName,
         referrerAddress
-      }
+      },
+      dataType,
+      data
     }
   }
 
@@ -2180,6 +2188,12 @@ export class SwappablePort {
 
     const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: waitForHighestBid })
 
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: [],
+      originFees: []
+    });
+
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
       maker: accountAddress,
@@ -2211,7 +2225,9 @@ export class SwappablePort {
       metadata: {
         asset: wyAsset,
         schema: schema.name as WyvernSchemaName,
-      }
+      },
+      dataType,
+      data
     }
   }
 
@@ -2352,6 +2368,12 @@ export class SwappablePort {
     const { basePrice, extra, paymentToken } = await this._getPriceParameters(OrderSide.Buy, paymentTokenAddress, expirationTime, startAmount)
     const times = this._getTimeParameters(expirationTime)
 
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: [],
+      originFees: []
+    });
+
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
       maker: accountAddress,
@@ -2382,7 +2404,9 @@ export class SwappablePort {
       metadata: {
         bundle,
         referrerAddress
-      }
+      },
+      dataType,
+      data
     }
   }
 
@@ -2447,6 +2471,12 @@ export class SwappablePort {
       feeRecipient
     } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, waitForHighestBid, asset?.collection.payoutAddress , sellerBountyBasisPoints)
 
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: [],
+      originFees: []
+    });
+
     return {
       exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
       maker: accountAddress,
@@ -2477,7 +2507,9 @@ export class SwappablePort {
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: {
         bundle
-      }
+      },
+      dataType,
+      data
     }
   }
 
@@ -2559,6 +2591,8 @@ export class SwappablePort {
       expirationTime: times.expirationTime,
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: order.metadata,
+      dataType: order.dataType,
+      data: order.data
     }
 
     return {

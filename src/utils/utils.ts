@@ -427,6 +427,9 @@ export const orderFromJSON = (order: any): Order => {
     paymentTokenContract: order.payment_token_contract ? tokenFromJSON(order.payment_token_contract) : undefined,
     asset: order.asset ? assetFromJSON(order.asset) : undefined,
     assetBundle: order.asset_bundle ? assetBundleFromJSON(order.asset_bundle) : undefined,
+
+    dataType: order.data_type,
+    data: order.data
   }
 
   // Use client-side price calc, to account for buyer fee (not added by server) and latency
