@@ -2605,8 +2605,8 @@ export class SwappablePort {
       expirationTime: times.expirationTime,
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: order.metadata,
-      dataType: dataType,
-      data: data
+      dataType,
+      data
     }
 
     return {
@@ -3222,10 +3222,10 @@ export class SwappablePort {
     { asset: SwappableAsset;
       accountAddress: string; }
   ) {
-      let retPayoutsData: Part[] = []
+      const retPayoutsData: Part[] = []
       asset.payouts.filter( ({ address }) => address === accountAddress )
       .forEach(payout => {
-        retPayoutsData.push({account: payout.address, value: payout.value});
+        retPayoutsData.push({account: payout.address, value: payout.value})
       })
       return retPayoutsData
   }
