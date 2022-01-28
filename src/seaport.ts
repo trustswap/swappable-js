@@ -83,6 +83,7 @@ import {
   SWAP_TOKEN_ADDRESS_MATIC_MAINNET,
   SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
 } from './constants'
+import { Part } from 'wyvern-js/lib/types'
 
 export class SwappablePort {
 
@@ -908,6 +909,7 @@ export class SwappablePort {
         referrerAddress?: string; }
     ): Promise<string> {
     const matchingOrder = this._makeMatchingOrder({
+      asset: order.asset as SwappableAsset,
       order,
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
@@ -1327,6 +1329,7 @@ export class SwappablePort {
     ): Promise<boolean> {
 
     const matchingOrder = this._makeMatchingOrder({
+      asset: order.asset as SwappableAsset,
       order,
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
@@ -2092,6 +2095,7 @@ export class SwappablePort {
 
     const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: false })
 
+    //For offers, taker ( seller ) is not decided, so will keep empty here
     const [ dataType, data ] = WyvernProtocol.encodeOrderData({
       dataType: "ORDER_DATA_TYPE_V1",
       payouts: [],
@@ -2190,7 +2194,7 @@ export class SwappablePort {
 
     const [ dataType, data ] = WyvernProtocol.encodeOrderData({
       dataType: "ORDER_DATA_TYPE_V1",
-      payouts: [],
+      payouts: this._getAssetPayoutsForAccount({asset: swappableAsset, accountAddress}),
       originFees: []
     });
 
@@ -2368,6 +2372,7 @@ export class SwappablePort {
     const { basePrice, extra, paymentToken } = await this._getPriceParameters(OrderSide.Buy, paymentTokenAddress, expirationTime, startAmount)
     const times = this._getTimeParameters(expirationTime)
 
+    //TODO: make it proper for bundle
     const [ dataType, data ] = WyvernProtocol.encodeOrderData({
       dataType: "ORDER_DATA_TYPE_V1",
       payouts: [],
@@ -2471,6 +2476,7 @@ export class SwappablePort {
       feeRecipient
     } = this._getSellFeeParameters(totalBuyerFeeBasisPoints, totalSellerFeeBasisPoints, swappableBuyerFeeBasisPoints, swappableSellerFeeBasisPoints, devBuyerFeeBasisPoints, devSellerFeeBasisPoints, waitForHighestBid, asset?.collection.payoutAddress , sellerBountyBasisPoints)
 
+    //TODO: make it proper for bundle
     const [ dataType, data ] = WyvernProtocol.encodeOrderData({
       dataType: "ORDER_DATA_TYPE_V1",
       payouts: [],
@@ -2514,8 +2520,9 @@ export class SwappablePort {
   }
 
   public _makeMatchingOrder(
-      { order, accountAddress, recipientAddress, devPayoutAddress }:
-      { order: UnsignedOrder;
+      { asset, order, accountAddress, recipientAddress, devPayoutAddress }:
+      { asset: SwappableAsset,
+        order: UnsignedOrder;
         accountAddress: string;
         recipientAddress: string;
         devPayoutAddress?: string; }
@@ -2563,6 +2570,13 @@ export class SwappablePort {
     console.log("🚀 ~ file: seaport.ts ~ line 2382 ~ SwappablePort ~ feeRecipient", feeRecipient)
     console.log("🚀 ~ file: seaport.ts ~ line 2421 ~ SwappablePort ~ devPayoutAddress", devPayoutAddress)
 
+    //TODO : check if order for new exchange
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: this._getAssetPayoutsForAccount({asset, accountAddress: order.side == OrderSide.Sell ? order.maker : accountAddress}),
+      originFees: []
+    });
+
     const matchingOrder: UnhashedOrder = {
       exchange: order.exchange,
       maker: accountAddress,
@@ -2591,8 +2605,8 @@ export class SwappablePort {
       expirationTime: times.expirationTime,
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: order.metadata,
-      dataType: order.dataType,
-      data: order.data
+      dataType: dataType,
+      data: data
     }
 
     return {
@@ -3196,6 +3210,24 @@ export class SwappablePort {
       listingTime: makeBigNumber(listingTimestamp),
       expirationTime: makeBigNumber(expirationTimestamp),
     }
+  }
+
+  /**
+   * Get the asset payouts for given account
+   * @param asset asset
+   * @param accountAddress account address to get asset payouts for
+   */
+  private _getAssetPayoutsForAccount(
+    { asset, accountAddress }:
+    { asset: SwappableAsset;
+      accountAddress: string; }
+  ) {
+      let retPayoutsData: Part[] = []
+      asset.payouts.filter( ({ address }) => address === accountAddress )
+      .forEach(payout => {
+        retPayoutsData.push({account: payout.address, value: payout.value});
+      })
+      return retPayoutsData
   }
 
   /**

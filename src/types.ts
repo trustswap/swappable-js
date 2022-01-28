@@ -5,7 +5,8 @@ import {
   HowToCall,
   // Note: Wyvern SaleKind is wrong!
   ECSignature,
-  Order as WyvernOrder
+  Order as WyvernOrder,
+  Part
 } from 'wyvern-js/lib/types'
 
 import { Token } from 'wyvern-schemas/dist/types'
@@ -373,7 +374,24 @@ export interface SwappableAsset extends Asset {
   // The per-transfer fee, in base units, for this asset in its transfer method
   transferFee: BigNumber | string | null,
   // The transfer fee token for this asset in its transfer method
-  transferFeePaymentToken: SwappableFungibleToken | null
+  transferFeePaymentToken: SwappableFungibleToken | null,
+  // Split payments
+  payouts: AssetPayout[]
+}
+
+/**
+ * Defines a AssetPayout type which contains details about asset payouts
+ */
+ export interface AssetPayout {
+
+  // An address to send payment to
+  address: string
+
+  // The value in percentage
+  value: number
+
+  // An address by which entry created
+  createdBy: string
 }
 
 /**

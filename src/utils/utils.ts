@@ -242,6 +242,7 @@ export const assetFromJSON = (asset: any): SwappableAsset => {
     transferFeePaymentToken: asset.transfer_fee_payment_token
       ? tokenFromJSON(asset.transfer_fee_payment_token)
       : null,
+    payouts: asset.payouts
   }
   // If orders were included, put them in sell/buy order groups
   if (fromJSON.orders && !fromJSON.sellOrders) {
