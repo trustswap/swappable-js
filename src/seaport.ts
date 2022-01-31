@@ -2,6 +2,7 @@ import * as Web3 from 'web3'
 import { WyvernProtocol } from 'wyvern-js'
 import * as WyvernSchemas from 'wyvern-schemas'
 import { Schema } from 'wyvern-schemas/dist/types'
+import { Part } from 'wyvern-js/lib/types'
 import * as _ from 'lodash'
 import { SwappableAPI } from './api'
 import { CanonicalWETH, ERC20, ERC721, WrappedNFT, WrappedNFTFactory, WrappedNFTLiquidationProxy, UniswapFactory, UniswapExchange, StaticCheckTxOrigin, StaticCheckCheezeWizards, StaticCheckDecentralandEstates, CheezeWizardsBasicTournament, DecentralandEstates, getMethod } from './contracts'
@@ -626,7 +627,7 @@ export class SwappablePort {
    * @param buyerEmail Optional email of the user that's allowed to purchase this item. If specified, a user will have to verify this email before being able to take the order.
    */
   public async createSellOrder(
-      { asset, accountAddress, startAmount, endAmount, quantity = 1, expirationTime = 0, waitForHighestBid = false, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints = 0, buyerAddress, buyerEmail }:
+      { asset, accountAddress, startAmount, endAmount, quantity = 1, expirationTime = 0, waitForHighestBid = false, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints = 0, buyerAddress, buyerEmail, payouts }:
       { asset: Asset;
         accountAddress: string;
         startAmount: number;
@@ -638,7 +639,8 @@ export class SwappablePort {
         paymentTokenAddress?: string;
         extraBountyBasisPoints?: number;
         buyerAddress?: string;
-        buyerEmail?: string; }
+        buyerEmail?: string;
+        payouts?: Array<Part> }
     ): Promise<Order> {
 
     const order = await this._makeSellOrder({
@@ -652,7 +654,8 @@ export class SwappablePort {
       englishAuctionReservePrice,
       paymentTokenAddress: paymentTokenAddress || NULL_ADDRESS,
       extraBountyBasisPoints,
-      buyerAddress: buyerAddress || NULL_ADDRESS
+      buyerAddress: buyerAddress || NULL_ADDRESS,
+      payouts: payouts || []
     })
 
     await this._sellOrderValidationAndApprovals({ order, accountAddress })
@@ -702,7 +705,7 @@ export class SwappablePort {
    * @returns The number of orders created in total
    */
   public async createFactorySellOrders(
-      { assets, accountAddress, startAmount, endAmount, quantity = 1, expirationTime = 0, waitForHighestBid = false, paymentTokenAddress, extraBountyBasisPoints = 0, buyerAddress, buyerEmail, numberOfOrders = 1 }:
+      { assets, accountAddress, startAmount, endAmount, quantity = 1, expirationTime = 0, waitForHighestBid = false, paymentTokenAddress, extraBountyBasisPoints = 0, buyerAddress, buyerEmail, numberOfOrders = 1, payouts }:
       { assets: Asset[];
         accountAddress: string;
         startAmount: number;
@@ -714,7 +717,8 @@ export class SwappablePort {
         extraBountyBasisPoints?: number;
         buyerAddress?: string;
         buyerEmail?: string;
-        numberOfOrders?: number; }
+        numberOfOrders?: number;
+        payouts: Array<Part> }
     ): Promise<number> {
 
     if (numberOfOrders < 1) {
@@ -740,7 +744,8 @@ export class SwappablePort {
       waitForHighestBid,
       paymentTokenAddress: paymentTokenAddress || NULL_ADDRESS,
       extraBountyBasisPoints,
-      buyerAddress: buyerAddress || NULL_ADDRESS
+      buyerAddress: buyerAddress || NULL_ADDRESS,
+      payouts
     })
     await this._sellOrderValidationAndApprovals({ order: dummyOrder, accountAddress })
 
@@ -755,7 +760,8 @@ export class SwappablePort {
         waitForHighestBid,
         paymentTokenAddress: paymentTokenAddress || NULL_ADDRESS,
         extraBountyBasisPoints,
-        buyerAddress: buyerAddress || NULL_ADDRESS
+        buyerAddress: buyerAddress || NULL_ADDRESS,
+        payouts
       })
 
       if (buyerEmail) {
@@ -901,17 +907,19 @@ export class SwappablePort {
    * @returns Transaction hash for fulfilling the order
    */
   public async fulfillOrder(
-      { order, accountAddress, recipientAddress, referrerAddress }:
+      { order, accountAddress, recipientAddress, referrerAddress, payouts }:
       { order: Order;
         accountAddress: string;
         recipientAddress?: string;
-        referrerAddress?: string; }
+        referrerAddress?: string; 
+        payouts: Array<Part>; }
     ): Promise<string> {
     const matchingOrder = this._makeMatchingOrder({
       order,
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
-      devPayoutAddress: order.asset?.collection.payoutAddress 
+      devPayoutAddress: order.asset?.collection.payoutAddress,
+      payouts
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
@@ -1319,18 +1327,20 @@ export class SwappablePort {
    * @param referrerAddress The optional address that referred the order
    */
   public async isOrderFulfillable(
-      { order, accountAddress, recipientAddress, referrerAddress }:
+      { order, accountAddress, recipientAddress, referrerAddress, payouts }:
       { order: Order;
         accountAddress: string;
         recipientAddress?: string;
-        referrerAddress?: string }
+        referrerAddress?: string;
+        payouts: Array<Part> }
     ): Promise<boolean> {
 
     const matchingOrder = this._makeMatchingOrder({
       order,
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
-      devPayoutAddress: order.asset?.collection.payoutAddress 
+      devPayoutAddress: order.asset?.collection.payoutAddress,
+      payouts
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
@@ -2136,7 +2146,7 @@ export class SwappablePort {
   }
 
   public async _makeSellOrder(
-      { asset, quantity, accountAddress, startAmount, endAmount, expirationTime, waitForHighestBid, englishAuctionReservePrice = 0, paymentTokenAddress, extraBountyBasisPoints, buyerAddress }:
+      { asset, quantity, accountAddress, startAmount, endAmount, expirationTime, waitForHighestBid, englishAuctionReservePrice = 0, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, payouts }:
       { asset: Asset;
         quantity: number;
         accountAddress: string;
@@ -2147,7 +2157,8 @@ export class SwappablePort {
         expirationTime: number;
         paymentTokenAddress: string;
         extraBountyBasisPoints: number;
-        buyerAddress: string; }
+        buyerAddress: string; 
+        payouts: Array<Part> }
     ): Promise<UnhashedOrder> {
 
     accountAddress = validateAndFormatWalletAddress(this.web3, accountAddress)
@@ -2190,7 +2201,7 @@ export class SwappablePort {
 
     const [ dataType, data ] = WyvernProtocol.encodeOrderData({
       dataType: "ORDER_DATA_TYPE_V1",
-      payouts: [],
+      payouts: payouts,
       originFees: []
     });
 
@@ -2514,11 +2525,12 @@ export class SwappablePort {
   }
 
   public _makeMatchingOrder(
-      { order, accountAddress, recipientAddress, devPayoutAddress }:
+      { order, accountAddress, recipientAddress, devPayoutAddress, payouts }:
       { order: UnsignedOrder;
         accountAddress: string;
         recipientAddress: string;
-        devPayoutAddress?: string; }
+        devPayoutAddress?: string;
+        payouts: Array<Part>;  }
     ): UnsignedOrder {
 
     accountAddress = validateAndFormatWalletAddress(this.web3, accountAddress)
@@ -2563,6 +2575,12 @@ export class SwappablePort {
     console.log("🚀 ~ file: seaport.ts ~ line 2382 ~ SwappablePort ~ feeRecipient", feeRecipient)
     console.log("🚀 ~ file: seaport.ts ~ line 2421 ~ SwappablePort ~ devPayoutAddress", devPayoutAddress)
 
+    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+      dataType: "ORDER_DATA_TYPE_V1",
+      payouts: order.side == OrderSide.Sell ? [] : payouts,
+      originFees: []
+    });
+
     const matchingOrder: UnhashedOrder = {
       exchange: order.exchange,
       maker: accountAddress,
@@ -2591,8 +2609,8 @@ export class SwappablePort {
       expirationTime: times.expirationTime,
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: order.metadata,
-      dataType: order.dataType,
-      data: order.data
+      dataType: order.side == OrderSide.Sell ? order.dataType : dataType,
+      data: order.side == OrderSide.Sell ? order.data : data
     }
 
     return {
