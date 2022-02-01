@@ -312,7 +312,7 @@ export declare class SwappablePort {
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string;
-        payouts: Array<Part>;
+        payouts?: Array<Part>;
     }): Promise<string>;
     atomicMatch({ buy, sell, accountAddress, metadata }: {
         buy: Order;
@@ -411,7 +411,7 @@ export declare class SwappablePort {
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string;
-        payouts: Array<Part>;
+        payouts?: Array<Part>;
     }): Promise<boolean>;
     /**
      * Returns whether an asset is transferrable.

@@ -912,14 +912,14 @@ export class SwappablePort {
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string; 
-        payouts: Array<Part>; }
+        payouts?: Array<Part>; }
     ): Promise<string> {
     const matchingOrder = this._makeMatchingOrder({
       order,
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
       devPayoutAddress: order.asset?.collection.payoutAddress,
-      payouts
+      payouts: payouts || []
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
@@ -1332,7 +1332,7 @@ export class SwappablePort {
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string;
-        payouts: Array<Part> }
+        payouts?: Array<Part> }
     ): Promise<boolean> {
 
     const matchingOrder = this._makeMatchingOrder({
@@ -1340,7 +1340,7 @@ export class SwappablePort {
       accountAddress,
       recipientAddress: recipientAddress || accountAddress,
       devPayoutAddress: order.asset?.collection.payoutAddress,
-      payouts
+      payouts: payouts || []
     })
 
     const { buy, sell } = assignOrdersToSides(order, matchingOrder)
