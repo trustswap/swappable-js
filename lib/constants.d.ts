@@ -6,7 +6,7 @@ export declare const SWAPPABLE_FEE_RECIPIENT = "0x5869d1ee6d0917b786188547788566
 export declare const DEP_INFURA_KEY = "8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const MAINNET_PROVIDER_URL = "https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
 export declare const RINKEBY_PROVIDER_URL = "https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8";
-export declare const MATIC_PROVIDER_URL = "https://rpc-mainnet.maticvigil.com";
+export declare const MATIC_PROVIDER_URL = "https://lively-red-water.matic.quiknode.pro/0585e7993349817e01d1742b4cae9a1837e34382/";
 export declare const MUMBAI_PROVIDER_URL = "https://rpc-mumbai.maticvigil.com";
 export declare const INVERSE_BASIS_POINT = 10000;
 export declare const MAX_UINT_256: BigNumber;

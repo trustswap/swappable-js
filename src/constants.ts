@@ -9,7 +9,7 @@ export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
 
-export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com' // Matic Mainnet
+export const MATIC_PROVIDER_URL = 'https://lively-red-water.matic.quiknode.pro/0585e7993349817e01d1742b4cae9a1837e34382/' // Matic Mainnet
 export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
 
 export const INVERSE_BASIS_POINT = 10000
