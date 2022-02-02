@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { WyvernProtocol } from 'wyvern-js';
 import * as Web3 from 'web3';
 import { AnnotatedFunctionABI, Schema } from 'wyvern-schemas/dist/types';
-import { Asset, AssetEvent, ECSignature, OpenSeaAccount, OpenSeaAsset, OpenSeaAssetBundle, OpenSeaAssetContract, OpenSeaCollection, OpenSeaFungibleToken, OpenSeaUser, Order, OrderJSON, Transaction, UnhashedOrder, UnsignedOrder, Web3Callback, WyvernAsset, WyvernBundle, WyvernFTAsset, WyvernNFTAsset } from '../types';
+import { Asset, AssetEvent, ECSignature, SwappableAccount, SwappableAsset, SwappableAssetBundle, SwappableAssetContract, SwappableCollection, SwappableFungibleToken, SwappableUser, Order, OrderJSON, Transaction, UnhashedOrder, UnsignedOrder, Web3Callback, WyvernAsset, WyvernBundle, WyvernFTAsset, WyvernNFTAsset } from '../types';
 export { WyvernProtocol };
 export declare const annotateERC721TransferABI: (asset: WyvernNFTAsset) => AnnotatedFunctionABI;
 export declare const annotateERC20TransferABI: (asset: WyvernFTAsset) => AnnotatedFunctionABI;
@@ -17,15 +17,15 @@ export declare const annotateERC20TransferABI: (asset: WyvernFTAsset) => Annotat
  */
 export declare function promisifyCall<T>(callback: (fn: Web3Callback<T>) => void, onError?: (error: Error) => void): Promise<T | undefined>;
 export declare const confirmTransaction: (web3: Web3, txHash: string) => Promise<unknown>;
-export declare const assetFromJSON: (asset: any) => OpenSeaAsset;
+export declare const assetFromJSON: (asset: any) => SwappableAsset;
 export declare const assetEventFromJSON: (assetEvent: any) => AssetEvent;
 export declare const transactionFromJSON: (transaction: any) => Transaction;
-export declare const accountFromJSON: (account: any) => OpenSeaAccount;
-export declare const userFromJSON: (user: any) => OpenSeaUser;
-export declare const assetBundleFromJSON: (asset_bundle: any) => OpenSeaAssetBundle;
-export declare const assetContractFromJSON: (asset_contract: any) => OpenSeaAssetContract;
-export declare const collectionFromJSON: (collection: any) => OpenSeaCollection;
-export declare const tokenFromJSON: (token: any) => OpenSeaFungibleToken;
+export declare const accountFromJSON: (account: any) => SwappableAccount;
+export declare const userFromJSON: (user: any) => SwappableUser;
+export declare const assetBundleFromJSON: (asset_bundle: any) => SwappableAssetBundle;
+export declare const assetContractFromJSON: (asset_contract: any) => SwappableAssetContract;
+export declare const collectionFromJSON: (collection: any) => SwappableCollection;
+export declare const tokenFromJSON: (token: any) => SwappableFungibleToken;
 export declare const orderFromJSON: (order: any) => Order;
 /**
  * Convert an order to JSON, hashing it as well if necessary
@@ -145,7 +145,7 @@ export declare function assignOrdersToSides(order: Order, matchingOrder: Unsigne
 export declare function delay(ms: number): Promise<unknown>;
 /**
  * Validates that an address exists, isn't null, and is properly
- * formatted for Wyvern and OpenSea
+ * formatted for Wyvern and Swappable
  * @param address input address
  */
 export declare function validateAndFormatWalletAddress(web3: Web3, address: string): string;

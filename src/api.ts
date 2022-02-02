@@ -2,13 +2,13 @@ import 'isomorphic-unfetch'
 import * as QueryString from 'query-string'
 import {
   Network,
-  OpenSeaAPIConfig,
-  OpenSeaAsset,
-  OpenSeaAssetBundle,
-  OpenSeaAssetBundleQuery,
-  OpenSeaAssetQuery,
-  OpenSeaFungibleToken,
-  OpenSeaFungibleTokenQuery,
+  SwappableAPIConfig,
+  SwappableAsset,
+  SwappableAssetBundle,
+  SwappableAssetBundleQuery,
+  SwappableAssetQuery,
+  SwappableFungibleToken,
+  SwappableFungibleTokenQuery,
   Order,
   OrderbookResponse,
   OrderJSON,
@@ -31,10 +31,10 @@ import {
   SITE_HOST_RINKEBY
 } from './constants'
 
-export class OpenSeaAPI {
+export class SwappableAPI {
 
   /**
-   * Host url for OpenSea
+   * Host url for Swappable
    */
   public readonly hostUrl: string
   /**
@@ -53,19 +53,21 @@ export class OpenSeaAPI {
   private apiKey: string | undefined
 
   /**
-   * Create an instance of the OpenSea API
-   * @param config OpenSeaAPIConfig for setting up the API, including an optional API key, network name, and base URL
+   * Create an instance of the Swappable API
+   * @param config SwappableAPIConfig for setting up the API, including an optional API key, network name, and base URL
    * @param logger Optional function for logging debug strings before and after requests are made
    */
-  constructor(config: OpenSeaAPIConfig, logger?: (arg: string) => void) {
+  constructor(config: SwappableAPIConfig, logger?: (arg: string) => void) {
     this.apiKey = config.apiKey
 
     switch (config.networkName) {
       case Network.Rinkeby:
+      case Network.Mumbai:
         this.apiBaseUrl = config.apiBaseUrl || API_BASE_RINKEBY
         this.hostUrl = SITE_HOST_RINKEBY
         break
       case Network.Main:
+      case Network.Matic:
       default:
         this.apiBaseUrl = config.apiBaseUrl || API_BASE_MAINNET
         this.hostUrl = SITE_HOST_MAINNET
@@ -195,7 +197,7 @@ export class OpenSeaAPI {
       tokenId: string | number | null,
     },
                         retries = 1
-    ): Promise<OpenSeaAsset> {
+    ): Promise<SwappableAsset> {
 
     let json
     try {
@@ -211,14 +213,14 @@ export class OpenSeaAPI {
 
   /**
    * Fetch list of assets from the API, returning the page of assets and the count of total assets
-   * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetJSON` type is supported
+   * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetJSON` type is supported
    * @param page Page number, defaults to 1. Can be overridden by
-   * `limit` and `offset` attributes from OpenSeaAssetQuery
+   * `limit` and `offset` attributes from SwappableAssetQuery
    */
   public async getAssets(
-      query: OpenSeaAssetQuery = {},
+      query: SwappableAssetQuery = {},
       page = 1
-    ): Promise<{assets: OpenSeaAsset[]; estimatedCount: number}> {
+    ): Promise<{assets: SwappableAsset[]; estimatedCount: number}> {
 
     const json = await this.get(`${API_PATH}/assets/`, {
       limit: this.pageSize,
@@ -234,16 +236,16 @@ export class OpenSeaAPI {
 
   /**
    * Fetch list of fungible tokens from the API matching paramters
-   * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetJSON` type is supported
+   * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetJSON` type is supported
    * @param page Page number, defaults to 1. Can be overridden by
-   * `limit` and `offset` attributes from OpenSeaFungibleTokenQuery
+   * `limit` and `offset` attributes from SwappableFungibleTokenQuery
    * @param retries Number of times to retry if the service is unavailable for any reason
    */
   public async getPaymentTokens(
-      query: OpenSeaFungibleTokenQuery = {},
+      query: SwappableFungibleTokenQuery = {},
       page = 1,
       retries = 1
-    ): Promise<{tokens: OpenSeaFungibleToken[]}> {
+    ): Promise<{tokens: SwappableFungibleToken[]}> {
 
     let json
     try {
@@ -269,7 +271,7 @@ export class OpenSeaAPI {
    */
   public async getBundle({ slug }: {
       slug: string
-    }): Promise<OpenSeaAssetBundle | null> {
+    }): Promise<SwappableAssetBundle | null> {
 
     const json = await this.get(`${API_PATH}/bundle/${slug}/`)
 
@@ -278,14 +280,14 @@ export class OpenSeaAPI {
 
   /**
    * Fetch list of bundles from the API, returning the page of bundles and the count of total bundles
-   * @param query Query to use for getting orders. A subset of parameters on the `OpenSeaAssetBundleJSON` type is supported
+   * @param query Query to use for getting orders. A subset of parameters on the `SwappableAssetBundleJSON` type is supported
    * @param page Page number, defaults to 1. Can be overridden by
-   * `limit` and `offset` attributes from OpenSeaAssetBundleQuery
+   * `limit` and `offset` attributes from SwappableAssetBundleQuery
    */
   public async getBundles(
-      query: OpenSeaAssetBundleQuery = {},
+      query: SwappableAssetBundleQuery = {},
       page = 1
-    ): Promise<{bundles: OpenSeaAssetBundle[]; estimatedCount: number}> {
+    ): Promise<{bundles: SwappableAssetBundle[]; estimatedCount: number}> {
 
     const json = await this.get(`${API_PATH}/bundles/`, {
       ...query,
@@ -405,7 +407,7 @@ export class OpenSeaAPI {
         errorMessage = `Not found. Full message was '${JSON.stringify(result)}'`
         break
       case 500:
-        errorMessage = `Internal server error. OpenSea has been alerted, but if the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(result)}`
+        errorMessage = `Internal server error. Swappable has been alerted, but if the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(result)}`
         break
       case 503:
         errorMessage = `Service unavailable. Please try again in a few minutes. If the problem persists please contact us via Discord: https://discord.gg/ga8EJbv - full message was ${JSON.stringify(result)}`

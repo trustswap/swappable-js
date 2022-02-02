@@ -8,7 +8,7 @@ import {
   test,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { Network } from '../../src/types'
 import { ALEX_ADDRESS, MYTHEREUM_TOKEN_ID, MYTHEREUM_ADDRESS, ALEX_ADDRESS_2, MAINNET_API_KEY, RINKEBY_API_KEY } from '../constants'
@@ -25,12 +25,12 @@ import { encodeCall } from '../../src/utils/schema'
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 const rinkebyProvider = new Web3.providers.HttpProvider(RINKEBY_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))
 
-const rinkebyClient = new OpenSeaPort(rinkebyProvider, {
+const rinkebyClient = new SwappablePort(rinkebyProvider, {
   networkName: Network.Rinkeby,
   apiKey: RINKEBY_API_KEY
 }, line => console.info(`RINKEBY: ${line}`))

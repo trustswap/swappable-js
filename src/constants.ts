@@ -4,14 +4,22 @@ import { BigNumber } from 'bignumber.js' // Typescript import issue
 export const DEFAULT_GAS_INCREASE_FACTOR = 1.01
 export const NULL_ADDRESS = WyvernProtocol.NULL_ADDRESS
 export const NULL_BLOCK_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
-export const OPENSEA_FEE_RECIPIENT = '0x5b3256965e7c3cf26e11fcaf296dfc8807c01073'
-export const DEP_INFURA_KEY = 'e8695bce67944848aa95459fac052f8e'
-export const MAINNET_PROVIDER_URL = 'https://api.opensea.io/jsonrpc/v1/'
-export const RINKEBY_PROVIDER_URL = 'https://rinkeby-api.opensea.io/jsonrpc/v1/'
+export const SWAPPABLE_FEE_RECIPIENT = '0x5869d1ee6d0917b786188547788566b25283ff6b'
+export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
+export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
+export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
+
+export const MATIC_PROVIDER_URL = 'https://rpc-mainnet.maticvigil.com' // Matic Mainnet
+export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
+
 export const INVERSE_BASIS_POINT = 10000
 export const MAX_UINT_256 = WyvernProtocol.MAX_UINT_256
-export const WYVERN_EXCHANGE_ADDRESS_MAINNET = '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b'
-export const WYVERN_EXCHANGE_ADDRESS_RINKEBY = '0x5206e78b21ce315ce284fb24cf05e0585a93b1d9'
+export const WYVERN_EXCHANGE_ADDRESS_MAINNET = '0x097ffeea86b38fa9ebad4bc2af902e3ba4fffee4'
+export const WYVERN_EXCHANGE_ADDRESS_RINKEBY = '0xc9a5Ba3C629F21e896F0B444B18cCF6a844ea606'
+
+export const WYVERN_EXCHANGE_ADDRESS_MATIC = '0x097ffeea86b38fa9ebad4bc2af902e3ba4fffee4'
+export const WYVERN_EXCHANGE_ADDRESS_MUMBAI = '0x31b49e94b0f5337d16b1f758991006838767294b'
+
 export const ENJIN_COIN_ADDRESS = '0xf629cbd94d3791c9250152bd8dfbdf380e2a3b9c'
 export const MANA_ADDRESS = '0x0f5d2fb29fb7d3cfee444a200298f468908cc942'
 export const ENJIN_ADDRESS = '0xfaaFDc07907ff5120a76b34b731b278c38d6043C'
@@ -30,26 +38,34 @@ export const CHEEZE_WIZARDS_GUILD_RINKEBY_ADDRESS = '0x095731b672b76b00A0b5cb9D8
 export const CHEEZE_WIZARDS_BASIC_TOURNAMENT_ADDRESS = WyvernProtocol.NULL_ADDRESS  // TODO: Update this address once Dapper has deployed their mainnet contracts
 export const CHEEZE_WIZARDS_BASIC_TOURNAMENT_RINKEBY_ADDRESS = '0x8852f5F7d1BB867AAf8fdBB0851Aa431d1df5ca1'
 export const DECENTRALAND_ESTATE_ADDRESS = '0x959e104e1a4db6317fa58f8295f586e1a978c297'
-export const STATIC_CALL_TX_ORIGIN_ADDRESS = '0xbff6ade67e3717101dd8d0a7f3de1bf6623a2ba8'
-export const STATIC_CALL_TX_ORIGIN_RINKEBY_ADDRESS = '0xe291abab95677bc652a44f973a8e06d48464e11c'
+
+export const STATIC_CALL_TX_ORIGIN_ADDRESS = '0xf20b2647679d32ff36dcd17fe4ffa5661ef79e7b'.toLowerCase()
+export const STATIC_CALL_TX_ORIGIN_RINKEBY_ADDRESS = '0x5fdce57c22497440843ab66fb1275a6988f6f7d9'.toLowerCase()
+
+export const STATIC_CALL_TX_ORIGIN_MATIC_ADDRESS = '0x817c257ab0458f7bd471d205055d82fbd407825d'.toLowerCase()
+export const STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS = '0x569bd9b3101236607c8c056a489910ff882711d8'.toLowerCase()
+
 export const STATIC_CALL_CHEEZE_WIZARDS_ADDRESS = WyvernProtocol.NULL_ADDRESS  // TODO: Deploy this address once Dapper has deployed their mainnet contracts
 export const STATIC_CALL_CHEEZE_WIZARDS_RINKEBY_ADDRESS = '0x8a640bdf8886dd6ca1fad9f22382b50deeacde08'
 export const STATIC_CALL_DECENTRALAND_ESTATES_ADDRESS = '0x93c3cd7ba04556d2e3d7b8106ce0f83e24a87a7e'
+
 export const DEFAULT_BUYER_FEE_BASIS_POINTS = 0
 export const DEFAULT_SELLER_FEE_BASIS_POINTS = 200
 export const DEFAULT_SELLER_FEE_BASIS_POINTS_FOR_SWAP = 100
-export const OPENSEA_SELLER_BOUNTY_BASIS_POINTS = 100
+export const SWAPPABLE_SELLER_BOUNTY_BASIS_POINTS = 100
 export const DEFAULT_MAX_BOUNTY = DEFAULT_SELLER_FEE_BASIS_POINTS
 export const MIN_EXPIRATION_SECONDS = 10
 export const ORDER_MATCHING_LATENCY_SECONDS = 60 * 60 * 24 * 7
 export const SELL_ORDER_BATCH_SIZE = 3
 export const ORDERBOOK_VERSION: number = 1
 export const API_VERSION: number = 1
-export const API_BASE_MAINNET = 'https://api.opensea.io'
-export const API_BASE_RINKEBY = 'https://rinkeby-api.opensea.io'
-export const SITE_HOST_MAINNET = 'https://opensea.io'
-export const SITE_HOST_RINKEBY = 'https://rinkeby.opensea.io'
+export const API_BASE_MAINNET = 'https://api.swappable.io'
+export const API_BASE_RINKEBY = 'https://swappable-testnet.trustswap.org:8000'
+export const SITE_HOST_MAINNET = 'https://swappable.io'
+export const SITE_HOST_RINKEBY = 'https://swappable-testnet.trustswap.org'
 export const ORDERBOOK_PATH = `/wyvern/v${ORDERBOOK_VERSION}`
 export const API_PATH = `/api/v${ORDERBOOK_VERSION}`
-export const SWAP_TOKEN_ADDRESS = '0xCC4304A31d09258b0029eA7FE63d032f52e44EFe'
-export const SWAP_TOKEN_RINKEBY_ADDRESS = WyvernProtocol.NULL_ADDRESS  // TODO: Deploy this
+export const SWAP_TOKEN_ADDRESS = '0xcc4304a31d09258b0029ea7fe63d032f52e44efe'
+export const SWAP_TOKEN_RINKEBY_ADDRESS = '0xf77ec971b04cb13ba20fcde023be3e7617a3eb8e'
+export const SWAP_TOKEN_ADDRESS_MATIC_MAINNET = '0x3809dcdd5dde24b37abe64a5a339784c3323c44f'
+export const SWAP_TOKEN_ADDRESS_MATIC_MUMBAI = '0xdf68ad003175883c97c10f37681613dc6a9b278a'

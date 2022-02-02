@@ -1,13 +1,9 @@
-![OpenSea.js Logo](https://storage.googleapis.com/opensea-static/opensea-js-logo.png "OpenSea.js Logo")
-
-# OpenSea.js <!-- omit in toc -->
+# Swappable.js <!-- omit in toc -->
 
 [![https://badges.frapsoft.com/os/mit/mit.svg?v=102](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://opensource.org/licenses/MIT)
 <!-- [![npm](https://img.shields.io/npm/v/wyvern-js.svg)](https://www.npmjs.com/package/wyvern-js) [![npm](https://img.shields.io/npm/dt/wyvern-js.svg)](https://www.npmjs.com/package/wyvern-js) -->
 
-A JavaScript library for crypto-native ecommerce: buying, selling, and bidding on any cryptogood. With OpenSea.js, you can easily build your own native marketplace for your non-fungible tokens, or NFTs. These can be ERC-721 or ERC-1155 (semi-fungible) items. You don't have to deploy your own smart contracts or backend orderbooks.
-
-Published on [GitHub](https://github.com/ProjectOpenSea/opensea-js) and [npm](https://www.npmjs.com/package/opensea-js)
+A JavaScript library for crypto-native ecommerce: buying, selling, and bidding on any cryptogood. With Swappable.js, you can easily build your own native marketplace for your non-fungible tokens, or NFTs. These can be ERC-721 or ERC-1155 (semi-fungible) items. You don't have to deploy your own smart contracts or backend orderbooks.
 
 - [Synopsis](#synopsis)
 - [Installation](#installation)
@@ -36,7 +32,7 @@ Published on [GitHub](https://github.com/ProjectOpenSea/opensea-js) and [npm](ht
   - [Using ERC-20 Tokens Instead of Ether](#using-erc-20-tokens-instead-of-ether)
   - [Private Auctions](#private-auctions)
   - [Airdrops and Email Whitelisting](#airdrops-and-email-whitelisting)
-  - [Sharing Sale Fees with OpenSea](#sharing-sale-fees-with-opensea)
+  - [Sharing Sale Fees with Swappable](#sharing-sale-fees-with-swappable)
   - [Listening to Events](#listening-to-events)
 - [Learning More](#learning-more)
   - [Example Code](#example-code)
@@ -46,7 +42,7 @@ Published on [GitHub](https://github.com/ProjectOpenSea/opensea-js) and [npm](ht
 
 ## Synopsis
 
-This is the JavaScript SDK for [OpenSea](https://opensea.io), the largest marketplace for crypto collectibles. It allows developers to access the official orderbook, filter it, create buy orders (**offers**), create sell orders (**auctions**), create collections of assets to sell at once (**bundles**), and complete trades programmatically.
+This is the JavaScript SDK for [Swappable](https://swappable.io), the largest marketplace for crypto collectibles. It allows developers to access the official orderbook, filter it, create buy orders (**offers**), create sell orders (**auctions**), create collections of assets to sell at once (**bundles**), and complete trades programmatically.
 
 For the first time, you can build a *cryptocommerce dapp*.
 
@@ -60,7 +56,7 @@ We recommend switching to Node.js version 8.11 to make sure common crypto depend
 
 Then, in your project, run:
 ```bash
-npm install --save opensea-js
+npm install --save swappable-js
 ```
 
 Install [web3](https://github.com/ethereum/web3.js) too if you haven't already.
@@ -75,27 +71,27 @@ sudo npm explore npm -g -- npm install node-gyp@latest # (Optional) update node-
 
 ## Getting Started
 
-To get started, create a new OpenSeaJS client, called an OpenSeaPort 🚢, using your Web3 provider:
+To get started, create a new SwappableJS client, called an SwappablePort 🚢, using your Web3 provider:
 
 ```JavaScript
 import * as Web3 from 'web3'
-import { OpenSeaPort, Network } from 'opensea-js'
+import { SwappablePort, Network } from 'swappable-js'
 
 // This example provider won't let you make transactions, only read-only calls:
 const provider = new Web3.providers.HttpProvider('https://mainnet.infura.io')
 
-const seaport = new OpenSeaPort(provider, {
+const seaport = new SwappablePort(provider, {
   networkName: Network.Main
 })
 ```
 
 **NOTE:** Using the sample Infura provider above won't let you authorize transactions, which are needed when approving and trading assets and currency. To make transactions, you need a provider with a private key or mnemonic set.
 
-In a browser with web3 or an extension like [MetaMask](https://metamask.io/) or [Dapper](http://www.meetdapper.com/), you can use `window.ethereum` (or `window.web3.currentProvider` for legacy mobile web3 browsers) to access the native provider. In a Node.js script, you can follow [this example](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/scripts/sell.js) to use a custom mnemonic.
+In a browser with web3 or an extension like [MetaMask](https://metamask.io/) or [Dapper](http://www.meetdapper.com/), you can use `window.ethereum` (or `window.web3.currentProvider` for legacy mobile web3 browsers) to access the native provider. In a Node.js script, you can follow [this example](https://github.com/ProjectSwappable/swappable-creatures/blob/master/scripts/sell.js) to use a custom mnemonic.
 
 ### Fetching Assets
 
-Assets are items on OpenSea. They can be non-fungible (conforming to standards like ERC721), semi-fungible (like ERC1155 assets), and even fungible (ERC20).
+Assets are items on Swappable. They can be non-fungible (conforming to standards like ERC721), semi-fungible (like ERC1155 assets), and even fungible (ERC20).
 
 Assets are represented by the `Asset` type, defined in TypeScript:
 
@@ -117,12 +113,12 @@ export interface Asset {
 }
 ```
 
-The `Asset` type is the minimal type you need for most marketplace actions. `WyvernSchemaName` is optional. If omitted, most actions will assume you're referring to a non-fungible, ERC721 asset. Other options include 'ERC20' and 'ERC1155'. You can import `import { WyvernSchemaName } from "opensea-js/lib/types"` to get the full range of schemas supported.
+The `Asset` type is the minimal type you need for most marketplace actions. `WyvernSchemaName` is optional. If omitted, most actions will assume you're referring to a non-fungible, ERC721 asset. Other options include 'ERC20' and 'ERC1155'. You can import `import { WyvernSchemaName } from "swappable-js/lib/types"` to get the full range of schemas supported.
 
-You can fetch an asset using the `OpenSeaAPI`, which will return an `OpenSeaAsset` for you (`OpenSeaAsset` extends `Asset`):
+You can fetch an asset using the `SwappableAPI`, which will return an `SwappableAsset` for you (`SwappableAsset` extends `Asset`):
 
 ```TypeScript
-const asset: OpenSeaAsset = await seaport.api.getAsset({
+const asset: SwappableAsset = await seaport.api.getAsset({
   tokenAddress, // string
   tokenId, // string | number | null
 })
@@ -182,7 +178,7 @@ const offer = await seaport.createBuyOrder({
 })
 ```
 
-When you make an offer on an item owned by an OpenSea user, **that user will automatically get an email notifying them with the offer amount**, if it's above their desired threshold.
+When you make an offer on an item owned by an Swappable user, **that user will automatically get an email notifying them with the offer amount**, if it's above their desired threshold.
 
 #### Bidding on Multiple Assets
 
@@ -199,11 +195,11 @@ const offer = await seaport.createBundleBuyOrder({
 })
 ```
 
-When you bid on multiple assets, an email will be sent to the owner if a bundle exists on OpenSea that contains the assets. In the future, OpenSea will send emails to multiple owners if the assets aren't all owned by the same wallet.
+When you bid on multiple assets, an email will be sent to the owner if a bundle exists on Swappable that contains the assets. In the future, Swappable will send emails to multiple owners if the assets aren't all owned by the same wallet.
 
 #### Bidding on ENS Short Name Auctions
 
-The Ethereum Name Service (ENS) is auctioning short (3-6 character) names that can be used for labeling wallet addresses and more. Learn more on the [ENS FAQ](https://opensea.io/ens).
+The Ethereum Name Service (ENS) is auctioning short (3-6 character) names that can be used for labeling wallet addresses and more. Learn more on the [ENS FAQ](https://swappable.io/ens).
 
 To bid, you must use the ENS Short Name schema:
 
@@ -290,7 +286,7 @@ Note that auctions aren't supported with Ether directly due to limitations in Et
 
 You can now sell items to users **without having to pay gas to mint them**!
 
-To create a presale or crowdsale and create batches of sell orders for a single asset factory, first follow the [tutorial](https://docs.opensea.io/docs/opensea-initial-item-sale-tutorial) for creating your crowdsale contract.
+To create a presale or crowdsale and create batches of sell orders for a single asset factory, first follow the [tutorial](https://docs.swappable.io/docs/swappable-initial-item-sale-tutorial) for creating your crowdsale contract.
 
 Then call `createFactorySellOrders` with your factory contract address and asset option identifier, and set `numberOfOrders` to the number of assets you'd like to let users buy and mint:
 
@@ -310,18 +306,18 @@ const sellOrders = await seaport.createFactorySellOrders({
 })
 ```
 
-Here's an [example script](https://github.com/ProjectOpenSea/opensea-creatures/blob/master/scripts/sell.js) you can use to mint items.
+Here's an [example script](https://github.com/ProjectSwappable/swappable-creatures/blob/master/scripts/sell.js) you can use to mint items.
 
 **NOTE:** If `numberOfOrders` is greater than 5, we will automatically batch them in groups of 5 so you can post orders in parallel. Requires an `apiKey` to be set during seaport initialization in order to not be throttled by the API.
 
-Games using this method include [Coins & Steel](https://opensea.io/assets/coins&steelfounderssale) and a couple in stealth :) If you have questions or want support, contact us at contact@opensea.io (or in [Discord](https://discord.gg/ga8EJbv)).
+Games using this method include [Coins & Steel](https://swappable.io/assets/coins&steelfounderssale) and a couple in stealth :) If you have questions or want support, contact us at contact@swappable.io (or in [Discord](https://discord.gg/ga8EJbv)).
 
 ### Fetching Orders
 
-To retrieve a list of offers and auction on an asset, you can use an instance of the `OpenSeaAPI` exposed on the client. Parameters passed into API filter objects are underscored instead of camel-cased, similar to the main [OpenSea API parameters](https://docs.opensea.io/v1.0/reference):
+To retrieve a list of offers and auction on an asset, you can use an instance of the `SwappableAPI` exposed on the client. Parameters passed into API filter objects are underscored instead of camel-cased, similar to the main [Swappable API parameters](https://docs.swappable.io/v1.0/reference):
 
 ```JavaScript
-import { OrderSide } from 'opensea-js/lib/types'
+import { OrderSide } from 'swappable-js/lib/types'
 
 // Get offers (bids), a.k.a. orders where `side == 0`
 const { orders, count } = await seaport.api.getOrders({
@@ -340,9 +336,9 @@ const { orders, count } = await seaport.api.getOrders({
 
 Note that the listing price of an asset is equal to the `currentPrice` of the **lowest valid sell order** on the asset. Users can lower their listing price without invalidating previous sell orders, so all get shipped down until they're cancelled or one is fulfilled.
 
-To learn more about signatures, makers, takers, listingTime vs createdTime and other kinds of order terminology, please read the [**Terminology Section**](https://docs.opensea.io/reference#terminology) of the API Docs.
+To learn more about signatures, makers, takers, listingTime vs createdTime and other kinds of order terminology, please read the [**Terminology Section**](https://docs.swappable.io/reference#terminology) of the API Docs.
 
-The available API filters for the orders endpoint is documented in the `OrderJSON` interface below, but see the main [API Docs](https://docs.opensea.io/reference#reference-getting-started) for a playground, along with more up-to-date and detailed explanantions.
+The available API filters for the orders endpoint is documented in the `OrderJSON` interface below, but see the main [API Docs](https://docs.swappable.io/reference#reference-getting-started) for a playground, along with more up-to-date and detailed explanantions.
 
 ```TypeScript
 /**
@@ -393,7 +389,7 @@ If the order is a buy order (`order.side === OrderSide.Buy`), then the taker is 
 
 ### Transferring Items or Coins (Gifting)
 
-A handy feature in OpenSea.js is the ability to transfer any supported asset (fungible or non-fungible tokens) in one line of JavaScript.
+A handy feature in Swappable.js is the ability to transfer any supported asset (fungible or non-fungible tokens) in one line of JavaScript.
 
 To transfer an ERC-721 asset or an ERC-1155 asset, it's just one call:
 
@@ -422,7 +418,7 @@ const transactionHash = await seaport.transfer({
 })
 ```
 
-To transfer fungible assets without token IDs, like ERC20 tokens, you can pass in an `OpenSeaFungibleToken` as the `asset`, set `schemaName` to "ERC20", and include `quantity` in base units (e.g. wei) to indicate how many.
+To transfer fungible assets without token IDs, like ERC20 tokens, you can pass in an `SwappableFungibleToken` as the `asset`, set `schemaName` to "ERC20", and include `quantity` in base units (e.g. wei) to indicate how many.
 
 Example for transfering 2 DAI ($2) to another address:
 
@@ -440,17 +436,17 @@ const transactionHash = await seaport.transfer({
 })
 ```
 
-For more information, check out the documentation for WyvernSchemas on https://projectopensea.github.io/opensea-js/.
+For more information, check out the documentation for WyvernSchemas on https://projectswappable.github.io/swappable-js/.
 
 ## Affiliate Program
 
-OpenSea.js allows to you easily create an affiliate program in just a few lines of JavaScript! It's the crypto-equivalent of bounty hunting, and best of all, it's **fully paid for by OpenSea** so you can keep all of your winnings 💰
+Swappable.js allows to you easily create an affiliate program in just a few lines of JavaScript! It's the crypto-equivalent of bounty hunting, and best of all, it's **fully paid for by Swappable** so you can keep all of your winnings 💰
 
 If you want to be an affiliate, you can use this to **win at least 1%** of the sale price of any listing, both for assets and bundles.
 
 ### Referring Listings
 
-You can instantly create an affiliate program for your assets by just passing in one more parameter when fulfilling orders... **and OpenSea will pay for it!** Whenever someone refers a sale or the acceptance of an offer, you can add a `referrerAddress` to give their wallet credit:
+You can instantly create an affiliate program for your assets by just passing in one more parameter when fulfilling orders... **and Swappable will pay for it!** Whenever someone refers a sale or the acceptance of an offer, you can add a `referrerAddress` to give their wallet credit:
 
 ```JavaScript
 const referrerAddress = "0x..." // The referrer's wallet address
@@ -459,7 +455,7 @@ await this.props.seaport.fulfillOrder({ order, accountAddress, referrerAddress }
 
 This works for buying assets and bundles, along with accepting bids that had no referrer attached to them (see below).
 
-As long as the referrer hasn't referred the buyer before, OpenSea will send the referrer an email congradulating them, along with **1%** of the item's sale price. If you'd like to be able to refer the same user for multiple purchases, contact us at contact@opensea.io (or in [Discord](https://discord.gg/ga8EJbv)).
+As long as the referrer hasn't referred the buyer before, Swappable will send the referrer an email congradulating them, along with **1%** of the item's sale price. If you'd like to be able to refer the same user for multiple purchases, contact us at contact@swappable.io (or in [Discord](https://discord.gg/ga8EJbv)).
 
 ### Referring Offers
 
@@ -484,11 +480,11 @@ The same thing works for `createBundleBuyOrder`.
 
 You can use `createBuyOrder({ referrerAddress })` to create your own affiliate programs as well.
 
-When buyers place offers or bids on an asset, the referrers will automatically be recorded on OpenSea.io. Then, you can use the [Orderbook API](https://docs.opensea.io/reference#retrieving-orders) to inspect the `metadata` for orders and manually pay out referrers if you want to. The referrer will be labeled as `referrerAddress` in the `metadata` field.
+When buyers place offers or bids on an asset, the referrers will automatically be recorded on Swappable.io. Then, you can use the [Orderbook API](https://docs.swappable.io/reference#retrieving-orders) to inspect the `metadata` for orders and manually pay out referrers if you want to. The referrer will be labeled as `referrerAddress` in the `metadata` field.
 
 ### Custom Referral Bounties
 
-Sellers can customize the bounties they add to their items when listing them for sale. By default, OpenSea will pay referrers 1% and sellers pay them nothing, but sellers can increase this up to the full OpenSea fee (currently 2.5% for most assets) for both assets and bundles:
+Sellers can customize the bounties they add to their items when listing them for sale. By default, Swappable will pay referrers 1% and sellers pay them nothing, but sellers can increase this up to the full Swappable fee (currently 2.5% for most assets) for both assets and bundles:
 
 ```JavaScript
 // Price the Genesis CryptoKitty at 100 ETH
@@ -496,7 +492,7 @@ const startAmount = 100
 // Reward referrers with 10% of the final sale price,
 // or 10 ETH in this case
 const extraBountyPercent = 10
-// The final bounty will be 10% + 1% from OpenSea, or 11 ETH!
+// The final bounty will be 10% + 1% from Swappable, or 11 ETH!
 
 const auction = await seaport.createSellOrder({
   tokenAddress: "0x06012c8cf97bead5deae237070f9587f8e7a266d", // CryptoKitties
@@ -507,13 +503,13 @@ const auction = await seaport.createSellOrder({
 })
 ```
 
-**NOTE:** The final bounty in the example above will be 10% from the seller plus 1% from OpenSea, or 11 ETH in total!
+**NOTE:** The final bounty in the example above will be 10% from the seller plus 1% from Swappable, or 11 ETH in total!
 
-Developers can request to increase the OpenSea fee to allow for higher bounties - by default, it's capped at 2.5%. If you have any questions, contact us at contact@opensea.io (or in [Discord](https://discord.gg/ga8EJbv)), or join the program at https://opensea.io/account#referrals.
+Developers can request to increase the Swappable fee to allow for higher bounties - by default, it's capped at 2.5%. If you have any questions, contact us at contact@swappable.io (or in [Discord](https://discord.gg/ga8EJbv)), or join the program at https://swappable.io/account#referrals.
 
 ## Advanced
 
-Interested in purchasing for users server-side or with a bot, making bundling items together, or making bids in different ERC-20 tokens? OpenSea.js can help with that.
+Interested in purchasing for users server-side or with a bot, making bundling items together, or making bids in different ERC-20 tokens? Swappable.js can help with that.
 
 ### Purchasing Items for Other Users
 
@@ -532,7 +528,7 @@ If the order is a sell order (`order.side === OrderSide.Sell`), the taker is the
 
 ### Bulk Transfers
 
-A handy feature in OpenSea.js is the ability to transfer multiple items at once in a single transaction. This works by grouping together as many `transferFrom` calls as the Ethereum gas limit allows, which is usually under 30 items, for most item contracts.
+A handy feature in Swappable.js is the ability to transfer multiple items at once in a single transaction. This works by grouping together as many `transferFrom` calls as the Ethereum gas limit allows, which is usually under 30 items, for most item contracts.
 
 To make a bulk transfer, it's just one call:
 
@@ -599,15 +595,15 @@ const order = await seaport.api.getOrders({
 })
 ```
 
-**Fun note:** soon, all ERC-20 tokens will be allowed! This will mean you can create crazy offers on crypto collectibles **using your own ERC-20 token**. However, opensea.io will only display offers and auctions in ERC-20 tokens that it knows about, optimizing the user experience of order takers. Orders made with the following tokens will be shown on OpenSea:
+**Fun note:** soon, all ERC-20 tokens will be allowed! This will mean you can create crazy offers on crypto collectibles **using your own ERC-20 token**. However, swappable.io will only display offers and auctions in ERC-20 tokens that it knows about, optimizing the user experience of order takers. Orders made with the following tokens will be shown on Swappable:
 
 * MANA, Decentraland's currency: https://etherscan.io/token/0x0f5d2fb29fb7d3cfee444a200298f468908cc942 
 * DAI, Maker's stablecoin, pegged to $1 USD: https://etherscan.io/token/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359
-* And tons more! See the "Currencies" list in the sidebar on https://opensea.io/assets for a full list, or contact us to add yours: [Discord](https://discord.gg/ga8EJbv)
+* And tons more! See the "Currencies" list in the sidebar on https://swappable.io/assets for a full list, or contact us to add yours: [Discord](https://discord.gg/ga8EJbv)
 
 ### Private Auctions
 
-Now you can make auctions and listings that can only be fulfilled by an address or email of your choosing. This allows you to negotiate a price in some channel and sell for your chosen price on OpenSea, **without having to trust that the counterparty will abide by your terms!**
+Now you can make auctions and listings that can only be fulfilled by an address or email of your choosing. This allows you to negotiate a price in some channel and sell for your chosen price on Swappable, **without having to trust that the counterparty will abide by your terms!**
 
 Here's an example of listing a Decentraland parcel for 10 ETH with a specific buyer address allowed to take it. No more needing to worry about whether they'll give you enough back!
 
@@ -642,85 +638,85 @@ const listing = await seaport.createSellOrder({
 ```
 
 
-### Sharing Sale Fees with OpenSea
+### Sharing Sale Fees with Swappable
 
-We share fees for successful sales with game developers, relayers, and affiliates using the OpenSea orderbook. Developers can customize the fee amount to apply to  buyers and/or sellers.
+We share fees for successful sales with game developers, relayers, and affiliates using the Swappable orderbook. Developers can customize the fee amount to apply to  buyers and/or sellers.
 
 See [Affiliate Program](#affiliate-program) above for how to register referrers for sales.
 
-More information will appear here when our redesigned affiliate program is ready. In the meantime, contact us at contact@opensea.io (or in [Discord](https://discord.gg/ga8EJbv)), or use our legacy affiliate program at https://opensea.io/account#referrals.
+More information will appear here when our redesigned affiliate program is ready. In the meantime, contact us at contact@swappable.io (or in [Discord](https://discord.gg/ga8EJbv)), or use our legacy affiliate program at https://swappable.io/account#referrals.
 
 ### Listening to Events
 
 Events are fired whenever transactions or orders are being created, and when transactions return receipts from recently mined blocks on the Ethereum blockchain.
 
-Our recommendation is that you "forward" OpenSea events to your own store or state management system. Here's an example of doing that with a Redux action:
+Our recommendation is that you "forward" Swappable events to your own store or state management system. Here's an example of doing that with a Redux action:
 
 ```JavaScript
-import { EventType } from 'opensea-js'
+import { EventType } from 'swappable-js'
 import * as ActionTypes from './index'
-import { openSeaPort } from '../globalSingletons'
+import { swappablePort } from '../globalSingletons'
 
 // ...
 
 handleSeaportEvents() {
   return async function(dispatch, getState) {
-    openSeaPort.addListener(EventType.TransactionCreated, ({ transactionHash, event }) => {
+    swappablePort.addListener(EventType.TransactionCreated, ({ transactionHash, event }) => {
       console.info({ transactionHash, event })
       dispatch({ type: ActionTypes.SET_PENDING_TRANSACTION_HASH, hash: transactionHash })
     })
-    openSeaPort.addListener(EventType.TransactionConfirmed, ({ transactionHash, event }) => {
+    swappablePort.addListener(EventType.TransactionConfirmed, ({ transactionHash, event }) => {
       console.info({ transactionHash, event })
       // Only reset your exchange UI if we're finishing an order fulfillment or cancellation
       if (event == EventType.MatchOrders || event == EventType.CancelOrder) {
         dispatch({ type: ActionTypes.RESET_EXCHANGE })
       }
     })
-    openSeaPort.addListener(EventType.TransactionDenied, ({ transactionHash, event }) => {
+    swappablePort.addListener(EventType.TransactionDenied, ({ transactionHash, event }) => {
       console.info({ transactionHash, event })
       dispatch({ type: ActionTypes.RESET_EXCHANGE })
     })
-    openSeaPort.addListener(EventType.TransactionFailed, ({ transactionHash, event }) => {
+    swappablePort.addListener(EventType.TransactionFailed, ({ transactionHash, event }) => {
       console.info({ transactionHash, event })
       dispatch({ type: ActionTypes.RESET_EXCHANGE })
     })
-    openSeaPort.addListener(EventType.InitializeAccount, ({ accountAddress }) => {
+    swappablePort.addListener(EventType.InitializeAccount, ({ accountAddress }) => {
       console.info({ accountAddress })
       dispatch({ type: ActionTypes.INITIALIZE_PROXY })
     })
-    openSeaPort.addListener(EventType.WrapEth, ({ accountAddress, amount }) => {
+    swappablePort.addListener(EventType.WrapEth, ({ accountAddress, amount }) => {
       console.info({ accountAddress, amount })
       dispatch({ type: ActionTypes.WRAP_ETH })
     })
-    openSeaPort.addListener(EventType.UnwrapWeth, ({ accountAddress, amount }) => {
+    swappablePort.addListener(EventType.UnwrapWeth, ({ accountAddress, amount }) => {
       console.info({ accountAddress, amount })
       dispatch({ type: ActionTypes.UNWRAP_WETH })
     })
-    openSeaPort.addListener(EventType.ApproveCurrency, ({ accountAddress, tokenAddress }) => {
+    swappablePort.addListener(EventType.ApproveCurrency, ({ accountAddress, tokenAddress }) => {
       console.info({ accountAddress, tokenAddress })
       dispatch({ type: ActionTypes.APPROVE_WETH })
     })
-    openSeaPort.addListener(EventType.ApproveAllAssets, ({ accountAddress, proxyAddress, tokenAddress }) => {
+    swappablePort.addListener(EventType.ApproveAllAssets, ({ accountAddress, proxyAddress, tokenAddress }) => {
       console.info({ accountAddress, proxyAddress, tokenAddress })
       dispatch({ type: ActionTypes.APPROVE_ALL_ASSETS })
     })
-    openSeaPort.addListener(EventType.ApproveAsset, ({ accountAddress, proxyAddress, tokenAddress, tokenId }) => {
+    swappablePort.addListener(EventType.ApproveAsset, ({ accountAddress, proxyAddress, tokenAddress, tokenId }) => {
       console.info({ accountAddress, proxyAddress, tokenAddress, tokenId })
       dispatch({ type: ActionTypes.APPROVE_ASSET })
     })
-    openSeaPort.addListener(EventType.CreateOrder, ({ order, accountAddress }) => {
+    swappablePort.addListener(EventType.CreateOrder, ({ order, accountAddress }) => {
       console.info({ order, accountAddress })
       dispatch({ type: ActionTypes.CREATE_ORDER })
     })
-    openSeaPort.addListener(EventType.OrderDenied, ({ order, accountAddress }) => {
+    swappablePort.addListener(EventType.OrderDenied, ({ order, accountAddress }) => {
       console.info({ order, accountAddress })
       dispatch({ type: ActionTypes.RESET_EXCHANGE })
     })
-    openSeaPort.addListener(EventType.MatchOrders, ({ buy, sell, accountAddress }) => {
+    swappablePort.addListener(EventType.MatchOrders, ({ buy, sell, accountAddress }) => {
       console.info({ buy, sell, accountAddress })
       dispatch({ type: ActionTypes.FULFILL_ORDER })
     })
-    openSeaPort.addListener(EventType.CancelOrder, ({ order, accountAddress }) => {
+    swappablePort.addListener(EventType.CancelOrder, ({ order, accountAddress }) => {
       console.info({ order, accountAddress })
       dispatch({ type: ActionTypes.CANCEL_ORDER })
     })
@@ -732,15 +728,15 @@ To remove all listeners and start over, just call `seaport.removeAllListeners()`
 
 ## Learning More
 
-Auto-generated documentation for each export is available [here](https://projectopensea.github.io/opensea-js/).
+Auto-generated documentation for each export is available [here](https://projectswappable.github.io/swappable-js/).
 
-If you need extra help, support is free! Contact the OpenSea devs. They're available every day on [Discord](https://discord.gg/XjwWYgU) in the `#developers` channel.
+If you need extra help, support is free! Contact the Swappable devs. They're available every day on [Discord](https://discord.gg/XjwWYgU) in the `#developers` channel.
 
 ### Example Code
 
-Check out the [Ship's Log](https://github.com/ProjectOpenSea/ships-log), built with the SDK, which shows the recent orders in the OpenSea orderbook.
+Check out the [Ship's Log](https://github.com/ProjectSwappable/ships-log), built with the SDK, which shows the recent orders in the Swappable orderbook.
 
-You can view a live demo [here](https://ships-log.herokuapp.com/)! Also check out the [Mythereum marketplace](https://mythereum.io/marketplace), which is entirely powered by OpenSea.js.
+You can view a live demo [here](https://ships-log.herokuapp.com/)! Also check out the [Mythereum marketplace](https://mythereum.io/marketplace), which is entirely powered by Swappable.js.
 
 ## Migrating to version 1.0
 
@@ -777,11 +773,11 @@ Or run the tests:
 npm test
 ```
 
-Note that the tests require access to both Infura and the OpenSea API. The timeout is adjustable via the `test` script in `package.json`.
+Note that the tests require access to both Infura and the Swappable API. The timeout is adjustable via the `test` script in `package.json`.
 
 **Generate Documentation**
 
-Generate html docs, also available for browsing [here](https://projectopensea.github.io/opensea-js/):
+Generate html docs, also available for browsing [here](https://projectswappable.github.io/swappable-js/):
 ```bash
 npm run docsHtml
 ```
@@ -808,4 +804,4 @@ Contributions welcome! Please use GitHub issues for suggestions/concerns - if yo
 
 * Is your computer's internal clock accurate? If not, try enabling automatic clock adjustment locally or following [this tutorial](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-time.html) to update an Amazon EC2 instance.
 
-* Are you attempting to purchase a token that's unpurchasable on [OpenSea](https://opensea.io/)?  If so, contact us [Discord](https://discord.gg/XjwWYgU) in the `#developers` channel and we'll help to diagnose the issue.
+* Are you attempting to purchase a token that's unpurchasable on [Swappable](https://swappable.io/)?  If so, contact us [Discord](https://discord.gg/XjwWYgU) in the `#developers` channel and we'll help to diagnose the issue.

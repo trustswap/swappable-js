@@ -62,13 +62,13 @@ export interface EventData {
     matchMetadata?: string;
 }
 /**
- * OpenSea API configuration object
+ * Swappable API configuration object
  * @param apiKey Optional key to use for API
  * @param networkName `Network` type to use. Defaults to `Network.Main` (mainnet)
  * @param gasPrice Default gas price to send to the Wyvern Protocol
  * @param apiBaseUrl Optional base URL to use for the API
  */
-export interface OpenSeaAPIConfig {
+export interface SwappableAPIConfig {
     networkName?: Network;
     apiKey?: string;
     apiBaseUrl?: string;
@@ -101,7 +101,7 @@ export declare enum SaleKind {
 }
 /**
  * Types of asset contracts
- * Given by the asset_contract_type in the OpenSea API
+ * Given by the asset_contract_type in the Swappable API
  */
 export declare enum AssetContractType {
     Fungible = "fungible",
@@ -160,15 +160,15 @@ export interface WyvernBundle {
 }
 export declare type WyvernAtomicMatchParameters = [string[], BigNumber[], Array<(number | BigNumber)>, string, string, string, string, string, string, Array<(number | BigNumber)>, string[]];
 /**
- * The OpenSea account object appended to orders, providing extra metadata, profile images and usernames
+ * The Swappable account object appended to orders, providing extra metadata, profile images and usernames
  */
-export interface OpenSeaAccount {
+export interface SwappableAccount {
     address: string;
     config: string;
     profileImgUrl: string;
-    user: OpenSeaUser | null;
+    user: SwappableUser | null;
 }
-export interface OpenSeaUser {
+export interface SwappableUser {
     username: string;
 }
 /**
@@ -183,9 +183,9 @@ export interface Asset {
     decimals?: number;
 }
 /**
- * Annotated asset contract with OpenSea metadata
+ * Annotated asset contract with Swappable metadata
  */
-export interface OpenSeaAssetContract extends OpenSeaFees {
+export interface SwappableAssetContract extends SwappableFees {
     name: string;
     address: string;
     type: AssetContractType;
@@ -208,9 +208,9 @@ interface StringTraitStats {
     [key: string]: number;
 }
 /**
- * Annotated collection with OpenSea metadata
+ * Annotated collection with Swappable metadata
  */
-export interface OpenSeaCollection extends OpenSeaFees {
+export interface SwappableCollection extends SwappableFees {
     name: string;
     slug: string;
     editors: string[];
@@ -223,24 +223,24 @@ export interface OpenSeaCollection extends OpenSeaFees {
     featuredImageUrl: string;
     stats: object;
     displayData: object;
-    paymentTokens: OpenSeaFungibleToken[];
+    paymentTokens: SwappableFungibleToken[];
     payoutAddress?: string;
-    traitStats: OpenSeaTraitStats;
+    traitStats: SwappableTraitStats;
     externalLink?: string;
     wikiLink?: string;
 }
-export interface OpenSeaTraitStats {
+export interface SwappableTraitStats {
     [traitName: string]: NumericalTraitStats | StringTraitStats;
 }
 /**
- * Annotated asset spec with OpenSea metadata
+ * Annotated asset spec with Swappable metadata
  */
-export interface OpenSeaAsset extends Asset {
-    assetContract: OpenSeaAssetContract;
-    collection: OpenSeaCollection;
+export interface SwappableAsset extends Asset {
+    assetContract: SwappableAssetContract;
+    collection: SwappableCollection;
     name: string;
     description: string;
-    owner: OpenSeaAccount;
+    owner: SwappableAccount;
     orders: Order[] | null;
     buyOrders: Order[] | null;
     sellOrders: Order[] | null;
@@ -249,14 +249,14 @@ export interface OpenSeaAsset extends Asset {
     imagePreviewUrl: string;
     imageUrlOriginal: string;
     imageUrlThumbnail: string;
-    openseaLink: string;
+    swappableLink: string;
     externalLink: string;
     traits: object[];
     numSales: number;
     lastSale: AssetEvent | null;
     backgroundColor: string | null;
     transferFee: BigNumber | string | null;
-    transferFeePaymentToken: OpenSeaFungibleToken | null;
+    transferFeePaymentToken: SwappableFungibleToken | null;
 }
 /**
  * Defines a AssetEvent type which contains details about an event that occurred
@@ -267,7 +267,7 @@ export interface AssetEvent {
     auctionType: AuctionType;
     totalPrice: string;
     transaction: Transaction | null;
-    paymentToken: OpenSeaFungibleToken | null;
+    paymentToken: SwappableFungibleToken | null;
 }
 /**
  * Defines set of possible auctions types
@@ -297,8 +297,8 @@ export declare enum AssetEventType {
  * Defines a Transaction type.
  */
 export interface Transaction {
-    fromAccount: OpenSeaAccount;
-    toAccount: OpenSeaAccount;
+    fromAccount: SwappableAccount;
+    toAccount: SwappableAccount;
     createdDate: Date;
     modifiedDate: Date;
     transactionHash: string;
@@ -308,40 +308,40 @@ export interface Transaction {
     timestamp: Date;
 }
 /**
- * Full annotated Fungible Token spec with OpenSea metadata
+ * Full annotated Fungible Token spec with Swappable metadata
  */
-export interface OpenSeaFungibleToken extends Token {
+export interface SwappableFungibleToken extends Token {
     imageUrl?: string;
     ethPrice?: string;
     usdPrice?: string;
 }
-export declare type FungibleToken = OpenSeaFungibleToken;
+export declare type FungibleToken = SwappableFungibleToken;
 /**
- * Bundles of assets, grouped together into one OpenSea order
+ * Bundles of assets, grouped together into one Swappable order
  * URLs for bundles are auto-generated from the name
  */
-export interface OpenSeaAssetBundle {
-    maker: OpenSeaAccount;
-    assets: OpenSeaAsset[];
+export interface SwappableAssetBundle {
+    maker: SwappableAccount;
+    assets: SwappableAsset[];
     name: string;
     slug: string;
     permalink: string;
     sellOrders: Order[] | null;
-    assetContract?: OpenSeaAssetContract;
+    assetContract?: SwappableAssetContract;
     description?: string;
     externalLink?: string;
 }
-export interface OpenSeaAssetBundleJSON {
-    assets: OpenSeaAsset[];
+export interface SwappableAssetBundleJSON {
+    assets: SwappableAsset[];
     name: string;
     description?: string;
     external_link?: string;
-    maker?: OpenSeaAccount;
+    maker?: SwappableAccount;
 }
 /**
  * Query interface for Bundles
  */
-export interface OpenSeaAssetBundleQuery extends Partial<OpenSeaAssetBundleJSON> {
+export interface SwappableAssetBundleQuery extends Partial<SwappableAssetBundleJSON> {
     asset_contract_address?: string;
     token_ids?: Array<number | string>;
     on_sale?: boolean;
@@ -353,16 +353,16 @@ export interface OpenSeaAssetBundleQuery extends Partial<OpenSeaAssetBundleJSON>
 /**
  * The basis point values of each type of fee
  */
-export interface OpenSeaFees {
-    openseaSellerFeeBasisPoints: number;
-    openseaBuyerFeeBasisPoints: number;
+export interface SwappableFees {
+    swappableSellerFeeBasisPoints: number;
+    swappableBuyerFeeBasisPoints: number;
     devSellerFeeBasisPoints: number;
     devBuyerFeeBasisPoints: number;
 }
 /**
  * Fully computed fees including bounties and transfer fees
  */
-export interface ComputedFees extends OpenSeaFees {
+export interface ComputedFees extends SwappableFees {
     totalBuyerFeeBasisPoints: number;
     totalSellerFeeBasisPoints: number;
     transferFee: BigNumber;
@@ -401,18 +401,18 @@ export interface Order extends UnsignedOrder, Partial<ECSignature> {
     createdTime?: BigNumber;
     currentPrice?: BigNumber;
     currentBounty?: BigNumber;
-    makerAccount?: OpenSeaAccount;
-    takerAccount?: OpenSeaAccount;
-    paymentTokenContract?: OpenSeaFungibleToken;
-    feeRecipientAccount?: OpenSeaAccount;
+    makerAccount?: SwappableAccount;
+    takerAccount?: SwappableAccount;
+    paymentTokenContract?: SwappableFungibleToken;
+    feeRecipientAccount?: SwappableAccount;
     cancelledOrFinalized?: boolean;
     markedInvalid?: boolean;
-    asset?: OpenSeaAsset;
-    assetBundle?: OpenSeaAssetBundle;
+    asset?: SwappableAsset;
+    assetBundle?: SwappableAssetBundle;
 }
 /**
  * Order attributes, including orderbook-specific query options
- * See https://docs.opensea.io/reference#retrieving-orders for the full
+ * See https://docs.swappable.io/reference#retrieving-orders for the full
  * list of API query parameters and documentation.
  */
 export interface OrderJSON extends Partial<ECSignature> {
@@ -449,7 +449,7 @@ export interface OrderJSON extends Partial<ECSignature> {
 /**
  * Query interface for Orders
  * Includes `maker`, `taker` and `side` from above
- * See https://docs.opensea.io/reference#retrieving-orders for
+ * See https://docs.swappable.io/reference#retrieving-orders for
  * full docs.
  */
 export interface OrderQuery extends Partial<OrderJSON> {
@@ -471,7 +471,7 @@ export interface OrderQuery extends Partial<OrderJSON> {
 /**
  * Query interface for Assets
  */
-export interface OpenSeaAssetQuery {
+export interface SwappableAssetQuery {
     owner?: string;
     asset_contract_address?: string;
     token_ids?: Array<number | string>;
@@ -484,12 +484,12 @@ export interface OpenSeaAssetQuery {
 /**
  * Query interface for Fungible Assets
  */
-export interface OpenSeaFungibleTokenQuery extends Partial<OpenSeaFungibleToken> {
+export interface SwappableFungibleTokenQuery extends Partial<SwappableFungibleToken> {
     limit?: number;
     offset?: number;
     symbol?: string;
 }
-export declare type FungibleTokenQuery = OpenSeaFungibleTokenQuery;
+export declare type FungibleTokenQuery = SwappableFungibleTokenQuery;
 export interface OrderbookResponse {
     orders: OrderJSON[];
     count: number;

@@ -8,7 +8,7 @@ import {
   skip,
 } from 'mocha-typescript'
 
-import { OpenSeaPort } from '../../src/index'
+import { SwappablePort } from '../../src/index'
 import * as Web3 from 'web3'
 import { WyvernProtocol } from 'wyvern-js'
 import { Network, Order, OrderSide, OrderJSON } from '../../src/types'
@@ -21,7 +21,7 @@ import { ORDERBOOK_VERSION, NULL_ADDRESS, MAINNET_PROVIDER_URL, ORDER_MATCHING_L
 
 const provider = new Web3.providers.HttpProvider(MAINNET_PROVIDER_URL)
 
-const client = new OpenSeaPort(provider, {
+const client = new SwappablePort(provider, {
   networkName: Network.Main,
   apiKey: MAINNET_API_KEY
 }, line => console.info(`MAINNET: ${line}`))
@@ -29,8 +29,8 @@ const client = new OpenSeaPort(provider, {
 suite('api', () => {
 
   test('API has correct base url', () => {
-    assert.equal(mainApi.apiBaseUrl, 'https://api.opensea.io')
-    assert.equal(rinkebyApi.apiBaseUrl, 'https://rinkeby-api.opensea.io')
+    assert.equal(mainApi.apiBaseUrl, 'https://api.swappable.io')
+    assert.equal(rinkebyApi.apiBaseUrl, 'https://rinkeby-api.swappable.io')
   })
 
   test('API fetches bundles and prefetches sell orders', async () => {
@@ -127,22 +127,22 @@ suite('api', () => {
     assert.equal(tokens[0].name, "Decentraland MANA")
   })
 
-  test('Rinkeby API orders have correct OpenSea url', async () => {
+  test('Rinkeby API orders have correct Swappable url', async () => {
     const order = await rinkebyApi.getOrder({})
     if (!order.asset) {
       return
     }
-    const url = `https://rinkeby.opensea.io/assets/${order.asset.assetContract.address}/${order.asset.tokenId}`
-    assert.equal(order.asset.openseaLink, url)
+    const url = `https://rinkeby.swappable.io/assets/${order.asset.assetContract.address}/${order.asset.tokenId}`
+    assert.equal(order.asset.swappableLink, url)
   })
 
-  test('Mainnet API orders have correct OpenSea url', async () => {
+  test('Mainnet API orders have correct Swappable url', async () => {
     const order = await mainApi.getOrder({})
     if (!order.asset) {
       return
     }
-    const url = `https://opensea.io/assets/${order.asset.assetContract.address}/${order.asset.tokenId}`
-    assert.equal(order.asset.openseaLink, url)
+    const url = `https://swappable.io/assets/${order.asset.assetContract.address}/${order.asset.tokenId}`
+    assert.equal(order.asset.swappableLink, url)
   })
 
   test('API fetches orderbook', async () => {
