@@ -1,4 +1,5 @@
 import * as Web3 from 'web3';
+import { Part } from 'wyvern-js/lib/types';
 import { SwappableAPI } from './api';
 import { FeeMethod, SwappableAPIConfig, OrderSide, UnhashedOrder, Order, UnsignedOrder, PartialReadonlyContractAbi, EventType, EventData, SwappableAsset, WyvernSchemaName, SwappableFungibleToken, WyvernAsset, ComputedFees, Asset } from './types';
 import { BigNumber } from 'bignumber.js';
@@ -207,7 +208,7 @@ export declare class SwappablePort {
      * @param buyerAddress Optional address that's allowed to purchase this item. If specified, no other address will be able to take the order, unless its value is the null address.
      * @param buyerEmail Optional email of the user that's allowed to purchase this item. If specified, a user will have to verify this email before being able to take the order.
      */
-    createSellOrder({ asset, accountAddress, startAmount, endAmount, quantity, expirationTime, waitForHighestBid, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, buyerEmail }: {
+    createSellOrder({ asset, accountAddress, startAmount, endAmount, quantity, expirationTime, waitForHighestBid, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, buyerEmail, payouts }: {
         asset: Asset;
         accountAddress: string;
         startAmount: number;
@@ -220,6 +221,7 @@ export declare class SwappablePort {
         extraBountyBasisPoints?: number;
         buyerAddress?: string;
         buyerEmail?: string;
+        payouts?: Array<Part>;
     }): Promise<Order>;
     /**
      * Create multiple sell orders in bulk to auction assets out of an asset factory.
@@ -241,7 +243,7 @@ export declare class SwappablePort {
      * @param numberOfOrders Number of times to repeat creating the same order for each asset. If greater than 5, creates them in batches of 5. Requires an `apiKey` to be set during seaport initialization in order to not be throttled by the API.
      * @returns The number of orders created in total
      */
-    createFactorySellOrders({ assets, accountAddress, startAmount, endAmount, quantity, expirationTime, waitForHighestBid, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, buyerEmail, numberOfOrders }: {
+    createFactorySellOrders({ assets, accountAddress, startAmount, endAmount, quantity, expirationTime, waitForHighestBid, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, buyerEmail, numberOfOrders, payouts }: {
         assets: Asset[];
         accountAddress: string;
         startAmount: number;
@@ -254,6 +256,7 @@ export declare class SwappablePort {
         buyerAddress?: string;
         buyerEmail?: string;
         numberOfOrders?: number;
+        payouts: Array<Part>;
     }): Promise<number>;
     /**
      * Create a sell order to auction a bundle of assets.
@@ -304,11 +307,12 @@ export declare class SwappablePort {
      * @param referrerAddress The optional address that referred the order
      * @returns Transaction hash for fulfilling the order
      */
-    fulfillOrder({ order, accountAddress, recipientAddress, referrerAddress }: {
+    fulfillOrder({ order, accountAddress, recipientAddress, referrerAddress, payouts }: {
         order: Order;
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string;
+        payouts?: Array<Part>;
     }): Promise<string>;
     atomicMatch({ buy, sell, accountAddress, metadata }: {
         buy: Order;
@@ -402,11 +406,12 @@ export declare class SwappablePort {
      * @param recipientAddress The optional address to receive the order's item(s) or curriencies. If not specified, defaults to accountAddress.
      * @param referrerAddress The optional address that referred the order
      */
-    isOrderFulfillable({ order, accountAddress, recipientAddress, referrerAddress }: {
+    isOrderFulfillable({ order, accountAddress, recipientAddress, referrerAddress, payouts }: {
         order: Order;
         accountAddress: string;
         recipientAddress?: string;
         referrerAddress?: string;
+        payouts?: Array<Part>;
     }): Promise<boolean>;
     /**
      * Returns whether an asset is transferrable.
@@ -608,7 +613,7 @@ export declare class SwappablePort {
         sellOrder?: UnhashedOrder;
         referrerAddress?: string;
     }): Promise<UnhashedOrder>;
-    _makeSellOrder({ asset, quantity, accountAddress, startAmount, endAmount, expirationTime, waitForHighestBid, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints, buyerAddress }: {
+    _makeSellOrder({ asset, quantity, accountAddress, startAmount, endAmount, expirationTime, waitForHighestBid, englishAuctionReservePrice, paymentTokenAddress, extraBountyBasisPoints, buyerAddress, payouts }: {
         asset: Asset;
         quantity: number;
         accountAddress: string;
@@ -620,6 +625,7 @@ export declare class SwappablePort {
         paymentTokenAddress: string;
         extraBountyBasisPoints: number;
         buyerAddress: string;
+        payouts: Array<Part>;
     }): Promise<UnhashedOrder>;
     _getStaticCallTargetAndExtraData({ asset, useTxnOriginStaticCall }: {
         asset: SwappableAsset;
@@ -661,11 +667,12 @@ export declare class SwappablePort {
         extraBountyBasisPoints: number;
         buyerAddress: string;
     }): Promise<UnhashedOrder>;
-    _makeMatchingOrder({ order, accountAddress, recipientAddress, devPayoutAddress }: {
+    _makeMatchingOrder({ order, accountAddress, recipientAddress, devPayoutAddress, payouts }: {
         order: UnsignedOrder;
         accountAddress: string;
         recipientAddress: string;
         devPayoutAddress?: string;
+        payouts: Array<Part>;
     }): UnsignedOrder;
     /**
      * Validate against Wyvern that a buy and sell order can match
