@@ -36,7 +36,7 @@ export async function requireOrdersCanMatch(
     {buy, sell, accountAddress}:
         { buy: Order, sell: Order, accountAddress: string }
 ) {
-    const result = await client.wyvernExchange.ordersCanMatch.callAsync(
+    const result = await client.wyvernExchange.ordersCanMatch(
         {
             exchange: buy.exchange,
             maker: buy.maker,
@@ -91,8 +91,7 @@ export async function requireOrdersCanMatch(
             dataType: "V1",
             data: "0x"
           },
-        {from: accountAddress},
-    )
+    ).callAsync({from: accountAddress})
 
     if (result) {
         return
@@ -152,7 +151,7 @@ export async function requireOrderCalldataCanMatch(
     {buy, sell}:
         { buy: Order, sell: Order }
 ) {
-    const result = await client.wyvernExchange.orderCalldataCanMatch.callAsync(buy.calldata, buy.replacementPattern, sell.calldata, sell.replacementPattern)
+    const result = await client.wyvernExchange.orderCalldataCanMatch(buy.calldata, buy.replacementPattern, sell.calldata, sell.replacementPattern).callAsync()
     if (result) {
         return
     }

@@ -224,7 +224,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.WrapAssets, { assets: wyAssets, accountAddress })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: this._wrappedNFTLiquidationProxyAddress,
@@ -271,7 +271,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.UnwrapAssets, { assets: wyAssets, accountAddress })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: this._wrappedNFTLiquidationProxyAddress,
@@ -319,7 +319,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.LiquidateAssets, { assets: wyAssets, accountAddress })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice: any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: this._wrappedNFTLiquidationProxyAddress,
@@ -355,11 +355,11 @@ export class SwappablePort {
 
     this._dispatch(EventType.PurchaseAssets, { amount, contractAddress, accountAddress })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: this._wrappedNFTLiquidationProxyAddress,
-      value: amount,
+      value: amount.toString(),
       data: encodeCall(getMethod(WrappedNFTLiquidationProxy, 'purchaseNFTs'),
         [numTokensToBuy, contractAddress]),
       gasPrice
@@ -427,11 +427,11 @@ export class SwappablePort {
 
     this._dispatch(EventType.WrapEth, { accountAddress, amount })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: token.address,
-      value: amount,
+      value: amount.toString(),
       data: encodeCall(getMethod(CanonicalWETH, 'deposit'), []),
       gasPrice
     }, error => {
@@ -459,7 +459,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.UnwrapWeth, { accountAddress, amount })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: token.address,
@@ -962,8 +962,8 @@ export class SwappablePort {
 
     this._dispatch(EventType.CancelOrder, { order, accountAddress })
 
-    const gasPrice = await this._computeGasPrice()
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder.sendTransactionAsync(
+    const gasPrice:any = await this._computeGasPrice()
+    const transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -995,7 +995,7 @@ export class SwappablePort {
         v: order.v || 0,
         r: order.r || NULL_BLOCK_HASH,
         s: order.s || NULL_BLOCK_HASH
-      },
+      }).sendTransactionAsync(
       { from: accountAddress, gasPrice })
 
     await this._confirmTransaction(transactionHash.toString(), EventType.CancelOrder, "Cancelling order", async () => {
@@ -1085,7 +1085,7 @@ export class SwappablePort {
           contractAddress: tokenAddress
         })
 
-        const gasPrice = await this._computeGasPrice()
+        const gasPrice:any = await this._computeGasPrice()
         const txHash = await sendRawTransaction(this.web3, {
           from: accountAddress,
           to: contract.address,
@@ -1143,7 +1143,7 @@ export class SwappablePort {
         asset: getWyvernAsset(schema, { tokenId, tokenAddress })
       })
 
-      const gasPrice = await this._computeGasPrice()
+      const gasPrice:any = await this._computeGasPrice()
       const txHash = await sendRawTransaction(this.web3, {
         from: accountAddress,
         to: contract.address,
@@ -1190,7 +1190,7 @@ export class SwappablePort {
       proxyAddress
     })
 
-    if (approvedAmount.greaterThanOrEqualTo(minimumAmount)) {
+    if (approvedAmount.isGreaterThanOrEqualTo(minimumAmount)) {
       this.logger('Already approved enough currency for trading')
       return null
     }
@@ -1205,12 +1205,12 @@ export class SwappablePort {
 
     const hasOldApproveMethod = [ENJIN_COIN_ADDRESS, MANA_ADDRESS].includes(tokenAddress.toLowerCase())
 
-    if (minimumAmount.greaterThan(0) && hasOldApproveMethod) {
+    if (minimumAmount.isGreaterThan(0) && hasOldApproveMethod) {
       // Older erc20s require initial approval to be 0
       await this.unapproveFungibleToken({ accountAddress, tokenAddress, proxyAddress })
     }
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
       to: tokenAddress,
@@ -1229,7 +1229,7 @@ export class SwappablePort {
         tokenAddress,
         proxyAddress
       })
-      return newlyApprovedAmount.greaterThanOrEqualTo(minimumAmount)
+      return newlyApprovedAmount.isGreaterThanOrEqualTo(minimumAmount)
     })
     return txHash
   }
@@ -1255,7 +1255,7 @@ export class SwappablePort {
   ): Promise<string> {
     proxyAddress = proxyAddress || WyvernProtocol.getTokenTransferProxyAddress(this._networkName)
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
 
     const txHash = await sendRawTransaction(this.web3, {
       from: accountAddress,
@@ -1283,7 +1283,7 @@ export class SwappablePort {
    */
   public async getCurrentPrice(order: Order) {
 
-    const currentPrice = await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice.callAsync(
+    const currentPrice = await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -1310,8 +1310,8 @@ export class SwappablePort {
         salt: order.salt,
         dataType: order.dataType,
         data: order.data
-      },
-    )
+      }
+    ).callAsync()
     return currentPrice
   }
 
@@ -1454,7 +1454,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.TransferOne, { accountAddress: fromAddress, toAddress, asset: wyAsset })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const data = encodeTransferCall(abi, fromAddress, toAddress)
     const txHash = await sendRawTransaction(this.web3, {
       from: fromAddress,
@@ -1503,7 +1503,7 @@ export class SwappablePort {
 
     this._dispatch(EventType.TransferAll, { accountAddress: fromAddress, toAddress, assets: wyAssets })
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txHash = await sendRawTransaction(this.web3, {
       from: fromAddress,
       to: proxyAddress,
@@ -1767,7 +1767,7 @@ export class SwappablePort {
    * @returns The order as stored by the orderbook
    */
   public async validateAndPostOrder(order: Order): Promise<Order> {
-    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder.callAsync(
+    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -1795,7 +1795,7 @@ export class SwappablePort {
         dataType: order.dataType,
         data: order.data
       }
-    )
+    ).callAsync()
 
     if (hash !== order.hash) {
       console.error(order)
@@ -1814,7 +1814,7 @@ export class SwappablePort {
    */
   public async _computeGasPrice(): Promise<BigNumber> {
     const meanGas = await getCurrentGasPrice(this.web3)
-    const weiToAdd = this.web3.toWei(this.gasPriceAddition, 'gwei')
+    const weiToAdd = this.web3.toWei(this.gasPriceAddition.toString(), 'gwei')
     return meanGas.plus(weiToAdd)
   }
 
@@ -1851,7 +1851,7 @@ export class SwappablePort {
     }
 
     try {
-      return await this._getClientsForRead(retries).wyvernProtocol.wyvernExchange.atomicMatch.estimateGasAsync(
+      return await this._getClientsForRead(retries).wyvernProtocol.wyvernExchange.atomicMatch(
         {
           exchange: buy.exchange,
           maker: buy.maker,
@@ -1916,9 +1916,9 @@ export class SwappablePort {
           r: sell.r || NULL_BLOCK_HASH,
           s: sell.s || NULL_BLOCK_HASH,
         },
-        metadata,
+        metadata)
         // Typescript error in estimate gas method, so use any
-        { from: accountAddress, value } as any)
+        .estimateGasAsync({ from: accountAddress, value } as any)
     } catch (error) {
 
       if (retries <= 0) {
@@ -1973,7 +1973,7 @@ export class SwappablePort {
    * @param retries Optional number of retries to do
    */
   public async _getProxy(accountAddress: string, retries = 0): Promise<string | null> {
-    let proxyAddress: string | null = await this._wyvernProtocolReadOnly.wyvernProxyRegistry.proxies.callAsync(accountAddress)
+    let proxyAddress: string | null = await this._wyvernProtocolReadOnly.wyvernProxyRegistry.proxies(accountAddress).callAsync()
 
     if (proxyAddress == '0x') {
       throw new Error("Couldn't retrieve your account from the blockchain - make sure you're on the correct Ethereum network!")
@@ -2001,10 +2001,10 @@ export class SwappablePort {
     this._dispatch(EventType.InitializeAccount, { accountAddress })
     this.logger(`Initializing proxy for account: ${accountAddress}`)
 
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const txnData: any = { from: accountAddress }
-    const gasEstimate = await this._wyvernProtocolReadOnly.wyvernProxyRegistry.registerProxy.estimateGasAsync(txnData)
-    const transactionHash = await this._wyvernProtocol.wyvernProxyRegistry.registerProxy.sendTransactionAsync({
+    const gasEstimate = await this._wyvernProtocolReadOnly.wyvernProxyRegistry.registerProxy().estimateGasAsync(txnData)
+    const transactionHash = await this._wyvernProtocol.wyvernProxyRegistry.registerProxy().sendTransactionAsync({
       ...txnData,
       gasPrice,
       gas: this._correctGasAmount(gasEstimate)
@@ -2721,7 +2721,7 @@ export class SwappablePort {
     }
 
     // Check sell parameters
-    const sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters.callAsync(
+    const sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -2748,8 +2748,8 @@ export class SwappablePort {
         salt: order.salt,
         dataType: order.dataType,
         data: order.data
-      },
-      { from: accountAddress })
+      })
+      .callAsync({ from: accountAddress })
     if (!sellValid) {
       console.error(order)
       throw new Error(`Failed to validate sell order parameters. Make sure you're on the right network!`)
@@ -2764,12 +2764,12 @@ export class SwappablePort {
    */
   public async _approveOrder(order: UnsignedOrder) {
     const accountAddress = order.maker
-    const gasPrice = await this._computeGasPrice()
+    const gasPrice:any = await this._computeGasPrice()
     const includeInOrderBook = true
 
     this._dispatch(EventType.ApproveOrder, { order, accountAddress })
 
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder.sendTransactionAsync(
+    const transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -2797,9 +2797,8 @@ export class SwappablePort {
         dataType: order.dataType,
         data: order.data
       },
-      includeInOrderBook,
-      { from: accountAddress, gasPrice }
-    )
+      includeInOrderBook)
+      .sendTransactionAsync({ from: accountAddress, gasPrice })
 
     await this._confirmTransaction(transactionHash.toString(), EventType.ApproveOrder, "Approving order", async () => {
       const isApproved = await this._validateOrder(order)
@@ -2811,7 +2810,7 @@ export class SwappablePort {
 
   public async _validateOrder(order: Order): Promise<boolean> {
 
-    const orderHash = await this._wyvernProtocolReadOnly.wyvernExchange.hashToSign.callAsync(
+    const orderHash = await this._wyvernProtocolReadOnly.wyvernExchange.hashToSign(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -2839,8 +2838,8 @@ export class SwappablePort {
         dataType: order.dataType,
         data: order.data
       }
-    )
-    const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder.callAsync(
+    ).callAsync()
+    const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder(
       orderHash,
       {
         exchange: order.exchange,
@@ -2874,7 +2873,7 @@ export class SwappablePort {
         r: order.r || NULL_BLOCK_HASH,
         s: order.s || NULL_BLOCK_HASH
       }
-    )
+    ).callAsync()
 
     return isValid
 
@@ -2993,7 +2992,7 @@ export class SwappablePort {
     }
 
     // Check order formation
-    const buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters.callAsync(
+    const buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -3020,8 +3019,8 @@ export class SwappablePort {
         salt: order.salt,
         dataType: order.dataType,
         data: order.data
-      },
-      { from: accountAddress })
+      }
+    ).callAsync({ from: accountAddress })
     if (!buyValid) {
       console.error(order)
       throw new Error(`Failed to validate buy order parameters. Make sure you're on the right network!`)
@@ -3051,14 +3050,14 @@ export class SwappablePort {
       : 1)
 
     const accountBalance = await this.getAssetBalance({ accountAddress, asset })
-    if (accountBalance.greaterThanOrEqualTo(minAmount)) {
+    if (accountBalance.isGreaterThanOrEqualTo(minAmount)) {
       return true
     }
 
     proxyAddress = proxyAddress || await this._getProxy(accountAddress)
     if (proxyAddress) {
       const proxyBalance = await this.getAssetBalance({ accountAddress: proxyAddress, asset })
-      if (proxyBalance.greaterThanOrEqualTo(minAmount)) {
+      if (proxyBalance.isGreaterThanOrEqualTo(minAmount)) {
         return true
       }
     }
@@ -3272,16 +3271,16 @@ export class SwappablePort {
     // Note: WyvernProtocol.toBaseUnitAmount(makeBigNumber(startAmount), token.decimals)
     // will fail if too many decimal places, so special-case ether
     const basePrice = isEther
-      ? makeBigNumber(this.web3.toWei(startAmount, 'ether')).round()
+      ? makeBigNumber(this.web3.toWei(startAmount, 'ether')).dp(0,7)
       : WyvernProtocol.toBaseUnitAmount(makeBigNumber(startAmount), token.decimals)
 
     const extra = isEther
-      ? makeBigNumber(this.web3.toWei(priceDiff, 'ether')).round()
+      ? makeBigNumber(this.web3.toWei(priceDiff, 'ether')).dp(0,7)
       : WyvernProtocol.toBaseUnitAmount(makeBigNumber(priceDiff), token.decimals)
 
     const reservePrice = englishAuctionReservePrice
       ? isEther
-        ? makeBigNumber(this.web3.toWei(englishAuctionReservePrice, 'ether')).round()
+        ? makeBigNumber(this.web3.toWei(englishAuctionReservePrice, 'ether')).dp(0,7)
         : WyvernProtocol.toBaseUnitAmount(makeBigNumber(englishAuctionReservePrice), token.decimals)
       : undefined
 
@@ -3355,7 +3354,7 @@ export class SwappablePort {
     // Estimate gas first
     try {
       // Typescript splat doesn't typecheck
-      const gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchange.atomicMatch.estimateGasAsync(
+      const gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchange.atomicMatch(
         {
           exchange: buy.exchange,
           maker: buy.maker,
@@ -3420,8 +3419,8 @@ export class SwappablePort {
           r: sell.r || NULL_BLOCK_HASH,
           s: sell.s || NULL_BLOCK_HASH,
         },
-        metadata, 
-        txnData)
+        metadata)
+        .estimateGasAsync(txnData)
 
       txnData.gasPrice = await this._computeGasPrice()
       txnData.gas = this._correctGasAmount(gasEstimate)
@@ -3434,7 +3433,7 @@ export class SwappablePort {
     // Then do the transaction
     try {
       this.logger(`Fulfilling order with gas set to ${txnData.gas}`)
-      txHash = await this._wyvernProtocol.wyvernExchange.atomicMatch.sendTransactionAsync(
+      txHash = await this._wyvernProtocol.wyvernExchange.atomicMatch(
         {
           exchange: buy.exchange,
           maker: buy.maker,
@@ -3499,8 +3498,8 @@ export class SwappablePort {
           r: sell.r || NULL_BLOCK_HASH,
           s: sell.s || NULL_BLOCK_HASH,
         },
-        metadata, 
-        txnData)
+        metadata)
+        .sendTransactionAsync(txnData)
     } catch (error) {
       console.error(error)
 
@@ -3525,7 +3524,7 @@ export class SwappablePort {
     sell.takerRelayerFee = makeBigNumber(sell.takerRelayerFee)
     const feePercentage = sell.takerRelayerFee.div(INVERSE_BASIS_POINT)
     const fee = feePercentage.times(maxPrice)
-    return fee.plus(maxPrice).ceil()
+    return fee.plus(maxPrice).dp(0,2)
   }
 
   private async _authorizeOrder(

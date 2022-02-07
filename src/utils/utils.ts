@@ -638,7 +638,7 @@ export async function estimateGas(
  * @param web3 Web3 instance
  */
 export async function getCurrentGasPrice(web3: Web3): Promise<BigNumber> {
-  const meanGas = await promisify<BigNumber>(c => web3.eth.getGasPrice(c))
+  const meanGas = await promisify<BigNumber>(c => web3.eth.getGasPrice(c as any))
   return meanGas
 }
 
@@ -763,7 +763,7 @@ export function estimateCurrentPrice(order: Order, secondsToBacktrack = 30, shou
     exactPrice = exactPrice.times(+takerRelayerFee / INVERSE_BASIS_POINT + 1)
   }
 
-  return shouldRoundUp ? exactPrice.ceil() : exactPrice
+  return shouldRoundUp ? exactPrice.dp(0,2) : exactPrice
 }
 
 /**
