@@ -480,6 +480,9 @@ export const orderToJSON = (order: Order): OrderJSON => {
     r: order.r,
     s: order.s,
 
+    dataType: order.dataType,
+    data: order.data,
+
     hash: order.hash
   }
   return asJSON

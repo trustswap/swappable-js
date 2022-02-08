@@ -444,6 +444,8 @@ export interface OrderJSON extends Partial<ECSignature> {
     expirationTime: number | string;
     salt: string;
     metadata: ExchangeMetadata;
+    dataType: string;
+    data: string;
     hash: string;
 }
 /**

@@ -637,6 +637,8 @@ export interface OrderJSON extends Partial<ECSignature> {
 
   metadata: ExchangeMetadata
 
+  dataType: string
+  data: string
   hash: string
 }
 
