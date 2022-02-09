@@ -428,7 +428,7 @@ export const orderFromJSON = (order: any): Order => {
     asset: order.asset ? assetFromJSON(order.asset) : undefined,
     assetBundle: order.asset_bundle ? assetBundleFromJSON(order.asset_bundle) : undefined,
 
-    dataType: order.data_type,
+    dataType: order.dataType,
     data: order.data
   }
 
