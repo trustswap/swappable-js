@@ -2810,73 +2810,48 @@ export class SwappablePort {
 
   public async _validateOrder(order: Order): Promise<boolean> {
 
-    const orderHash = await this._wyvernProtocolReadOnly.wyvernExchange.hashToSign(
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      }
-    ).callAsync()
+    const orderToValidate = {
+      exchange: order.exchange,
+      maker: order.maker,
+      taker: order.taker,
+      makerRelayerFee: order.makerRelayerFee,
+      takerRelayerFee: order.takerRelayerFee,
+      makerProtocolFee: order.makerProtocolFee,
+      takerProtocolFee: order.takerProtocolFee,
+      feeRecipient: order.feeRecipient,
+      feeMethod: order.feeMethod,
+      side: order.side,
+      saleKind: order.saleKind,
+      target: order.target,
+      howToCall: order.howToCall,
+      calldatas: order.calldata,
+      replacementPattern: order.replacementPattern,
+      staticTarget: order.staticTarget,
+      staticExtradata: order.staticExtradata,
+      paymentToken: order.paymentToken,
+      basePrice: order.basePrice,
+      extra: order.extra,
+      listingTime: order.listingTime,
+      expirationTime: order.expirationTime,
+      salt: order.salt,
+      dataType: order.dataType,
+      data: order.data
+    }
+
+    const orderSig = {
+      v: order.v || 0,
+      r: order.r || NULL_BLOCK_HASH,
+      s: order.s || NULL_BLOCK_HASH
+    }
+
+    const orderHash = await this._wyvernProtocolReadOnly.wyvernExchange.hashToSign(orderToValidate).callAsync()
     const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder(
       orderHash,
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      },
-      {
-        v: order.v || 0,
-        r: order.r || NULL_BLOCK_HASH,
-        s: order.s || NULL_BLOCK_HASH
-      }
+      orderToValidate,
+      orderSig
     ).callAsync()
 
     return isValid
-
   }
 
   public async _approveAll(
@@ -3327,98 +3302,83 @@ export class SwappablePort {
 
     let txHash
     const txnData: any = { from: accountAddress, value }
-    const args: WyvernAtomicMatchParameters = [
-      [buy.exchange, buy.maker, buy.taker, buy.feeRecipient, buy.target,
-      buy.staticTarget, buy.paymentToken, sell.exchange, sell.maker, sell.taker, sell.feeRecipient, sell.target, sell.staticTarget, sell.paymentToken],
-      [buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt],
-      [buy.feeMethod, buy.side, buy.saleKind, buy.howToCall, sell.feeMethod, sell.side, sell.saleKind, sell.howToCall],
-      buy.calldata,
-      sell.calldata,
-      buy.replacementPattern,
-      sell.replacementPattern,
-      buy.staticExtradata,
-      sell.staticExtradata,
-      [
-        buy.v || 0,
-        sell.v || 0
-      ],
-      [
-        buy.r || NULL_BLOCK_HASH,
-        buy.s || NULL_BLOCK_HASH,
-        sell.r || NULL_BLOCK_HASH,
-        sell.s || NULL_BLOCK_HASH,
-        metadata
-      ]
-    ]
 
+    const buyOrder = {
+      exchange: buy.exchange,
+      maker: buy.maker,
+      taker: buy.taker,
+      makerRelayerFee: buy.makerRelayerFee,
+      takerRelayerFee: buy.takerRelayerFee,
+      makerProtocolFee: buy.makerProtocolFee,
+      takerProtocolFee: buy.takerProtocolFee,
+      feeRecipient: buy.feeRecipient,
+      feeMethod: buy.feeMethod,
+      side: buy.side,
+      saleKind: buy.saleKind,
+      target: buy.target,
+      howToCall: buy.howToCall,
+      calldatas: buy.calldata,
+      replacementPattern: buy.replacementPattern,
+      staticTarget: buy.staticTarget,
+      staticExtradata: buy.staticExtradata,
+      paymentToken: buy.paymentToken,
+      basePrice: buy.basePrice,
+      extra: buy.extra,
+      listingTime: buy.listingTime,
+      expirationTime: buy.expirationTime,
+      salt: buy.salt,
+      dataType: buy.dataType,
+      data: buy.data
+    }
+
+    const buySig = {
+      v: buy.v || 0,
+      r: buy.r || NULL_BLOCK_HASH,
+      s: buy.s || NULL_BLOCK_HASH,
+    }
+
+    const sellOrder = {
+      exchange: sell.exchange,
+      maker: sell.maker,
+      taker: sell.taker,
+      makerRelayerFee: sell.makerRelayerFee,
+      takerRelayerFee: sell.takerRelayerFee,
+      makerProtocolFee: sell.makerProtocolFee,
+      takerProtocolFee: sell.takerProtocolFee,
+      feeRecipient: sell.feeRecipient,
+      feeMethod: sell.feeMethod,
+      side: sell.side,
+      saleKind: sell.saleKind,
+      target: sell.target,
+      howToCall: sell.howToCall,
+      calldatas: sell.calldata,
+      replacementPattern: sell.replacementPattern,
+      staticTarget: sell.staticTarget,
+      staticExtradata: sell.staticExtradata,
+      paymentToken: sell.paymentToken,
+      basePrice: sell.basePrice,
+      extra: sell.extra,
+      listingTime: sell.listingTime,
+      expirationTime: sell.expirationTime,
+      salt: sell.salt,
+      dataType: sell.dataType,
+      data: sell.data
+    }
+
+    const sellSig = {
+      v: sell.v || 0,
+      r: sell.r || NULL_BLOCK_HASH,
+      s: sell.s || NULL_BLOCK_HASH,
+    }
+    
     // Estimate gas first
     try {
       // Typescript splat doesn't typecheck
       const gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchange.atomicMatch(
-        {
-          exchange: buy.exchange,
-          maker: buy.maker,
-          taker: buy.taker,
-          makerRelayerFee: buy.makerRelayerFee,
-          takerRelayerFee: buy.takerRelayerFee,
-          makerProtocolFee: buy.makerProtocolFee,
-          takerProtocolFee: buy.takerProtocolFee,
-          feeRecipient: buy.feeRecipient,
-          feeMethod: buy.feeMethod,
-          side: buy.side,
-          saleKind: buy.saleKind,
-          target: buy.target,
-          howToCall: buy.howToCall,
-          calldatas: buy.calldata,
-          replacementPattern: buy.replacementPattern,
-          staticTarget: buy.staticTarget,
-          staticExtradata: buy.staticExtradata,
-          paymentToken: buy.paymentToken,
-          basePrice: buy.basePrice,
-          extra: buy.extra,
-          listingTime: buy.listingTime,
-          expirationTime: buy.expirationTime,
-          salt: buy.salt,
-          dataType: buy.dataType,
-          data: buy.data
-        },
-        {
-          v: buy.v || 0,
-          r: buy.r || NULL_BLOCK_HASH,
-          s: buy.s || NULL_BLOCK_HASH,
-        },
-        {
-          exchange: sell.exchange,
-          maker: sell.maker,
-          taker: sell.taker,
-          makerRelayerFee: sell.makerRelayerFee,
-          takerRelayerFee: sell.takerRelayerFee,
-          makerProtocolFee: sell.makerProtocolFee,
-          takerProtocolFee: sell.takerProtocolFee,
-          feeRecipient: sell.feeRecipient,
-          feeMethod: sell.feeMethod,
-          side: sell.side,
-          saleKind: sell.saleKind,
-          target: sell.target,
-          howToCall: sell.howToCall,
-          calldatas: sell.calldata,
-          replacementPattern: sell.replacementPattern,
-          staticTarget: sell.staticTarget,
-          staticExtradata: sell.staticExtradata,
-          paymentToken: sell.paymentToken,
-          basePrice: sell.basePrice,
-          extra: sell.extra,
-          listingTime: sell.listingTime,
-          expirationTime: sell.expirationTime,
-          salt: sell.salt,
-          dataType: sell.dataType,
-          data: sell.data
-        },
-        {
-          v: sell.v || 0,
-          r: sell.r || NULL_BLOCK_HASH,
-          s: sell.s || NULL_BLOCK_HASH,
-        },
+        buyOrder,
+        buySig,
+        sellOrder,
+        sellSig,
         metadata)
         .estimateGasAsync(txnData)
 
@@ -3426,7 +3386,7 @@ export class SwappablePort {
       txnData.gas = this._correctGasAmount(gasEstimate)
 
     } catch (error) {
-      console.error(`Failed atomic match with args: `, args, error)
+      console.error(`Failed atomic match for buy: ${buyOrder} and sell: ${sellOrder} with error: ${error}`)
       throw new Error(`Oops, the Ethereum network rejected this transaction :( The Swappable devs have been alerted, but this problem is typically due an item being locked or untransferrable. The exact error was "${error.message.substr(0, MAX_ERROR_LENGTH)}..."`)
     }
 
@@ -3434,70 +3394,10 @@ export class SwappablePort {
     try {
       this.logger(`Fulfilling order with gas set to ${txnData.gas}`)
       txHash = await this._wyvernProtocol.wyvernExchange.atomicMatch(
-        {
-          exchange: buy.exchange,
-          maker: buy.maker,
-          taker: buy.taker,
-          makerRelayerFee: buy.makerRelayerFee,
-          takerRelayerFee: buy.takerRelayerFee,
-          makerProtocolFee: buy.makerProtocolFee,
-          takerProtocolFee: buy.takerProtocolFee,
-          feeRecipient: buy.feeRecipient,
-          feeMethod: buy.feeMethod,
-          side: buy.side,
-          saleKind: buy.saleKind,
-          target: buy.target,
-          howToCall: buy.howToCall,
-          calldatas: buy.calldata,
-          replacementPattern: buy.replacementPattern,
-          staticTarget: buy.staticTarget,
-          staticExtradata: buy.staticExtradata,
-          paymentToken: buy.paymentToken,
-          basePrice: buy.basePrice,
-          extra: buy.extra,
-          listingTime: buy.listingTime,
-          expirationTime: buy.expirationTime,
-          salt: buy.salt,
-          dataType: buy.dataType,
-          data: buy.data
-        },
-        {
-          v: buy.v || 0,
-          r: buy.r || NULL_BLOCK_HASH,
-          s: buy.s || NULL_BLOCK_HASH,
-        },
-        {
-          exchange: sell.exchange,
-          maker: sell.maker,
-          taker: sell.taker,
-          makerRelayerFee: sell.makerRelayerFee,
-          takerRelayerFee: sell.takerRelayerFee,
-          makerProtocolFee: sell.makerProtocolFee,
-          takerProtocolFee: sell.takerProtocolFee,
-          feeRecipient: sell.feeRecipient,
-          feeMethod: sell.feeMethod,
-          side: sell.side,
-          saleKind: sell.saleKind,
-          target: sell.target,
-          howToCall: sell.howToCall,
-          calldatas: sell.calldata,
-          replacementPattern: sell.replacementPattern,
-          staticTarget: sell.staticTarget,
-          staticExtradata: sell.staticExtradata,
-          paymentToken: sell.paymentToken,
-          basePrice: sell.basePrice,
-          extra: sell.extra,
-          listingTime: sell.listingTime,
-          expirationTime: sell.expirationTime,
-          salt: sell.salt,
-          dataType: sell.dataType,
-          data: sell.data
-        },
-        {
-          v: sell.v || 0,
-          r: sell.r || NULL_BLOCK_HASH,
-          s: sell.s || NULL_BLOCK_HASH,
-        },
+        buyOrder,
+        buySig,
+        sellOrder,
+        sellSig,
         metadata)
         .sendTransactionAsync(txnData)
     } catch (error) {

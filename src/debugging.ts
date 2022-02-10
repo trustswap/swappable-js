@@ -61,8 +61,8 @@ export async function requireOrdersCanMatch(
             listingTime: buy.listingTime,
             expirationTime: buy.expirationTime,
             salt: buy.salt,
-            dataType: "V1",
-            data: "0x"
+            dataType: buy.dataType,
+            data: buy.data
           },
           {
             exchange: sell.exchange,
@@ -88,8 +88,8 @@ export async function requireOrdersCanMatch(
             listingTime: sell.listingTime,
             expirationTime: sell.expirationTime,
             salt: sell.salt,
-            dataType: "V1",
-            data: "0x"
+            dataType: sell.dataType,
+            data: sell.data
           },
     ).callAsync({from: accountAddress})
 
