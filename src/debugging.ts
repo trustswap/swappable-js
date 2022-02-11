@@ -33,65 +33,80 @@ const SaleKindInterface = {
  */
 export async function requireOrdersCanMatch(
     client: WyvernProtocol,
-    {buy, sell, accountAddress}:
-        { buy: Order, sell: Order, accountAddress: string }
+    {buy, sell, accountAddress} : { buy: Order, sell: Order, accountAddress: string},
+    isOrderV1: Boolean
 ) {
-    const result = await client.wyvernExchange.ordersCanMatch(
-        {
-            exchange: buy.exchange,
-            maker: buy.maker,
-            taker: buy.taker,
-            makerRelayerFee: buy.makerRelayerFee,
-            takerRelayerFee: buy.takerRelayerFee,
-            makerProtocolFee: buy.makerProtocolFee,
-            takerProtocolFee: buy.takerProtocolFee,
-            feeRecipient: buy.feeRecipient,
-            feeMethod: buy.feeMethod,
-            side: buy.side,
-            saleKind: buy.saleKind,
-            target: buy.target,
-            howToCall: buy.howToCall,
-            calldatas: buy.calldata,
-            replacementPattern: buy.replacementPattern,
-            staticTarget: buy.staticTarget,
-            staticExtradata: buy.staticExtradata,
-            paymentToken: buy.paymentToken,
-            basePrice: buy.basePrice,
-            extra: buy.extra,
-            listingTime: buy.listingTime,
-            expirationTime: buy.expirationTime,
-            salt: buy.salt,
-            dataType: buy.dataType,
-            data: buy.data
-          },
-          {
-            exchange: sell.exchange,
-            maker: sell.maker,
-            taker: sell.taker,
-            makerRelayerFee: sell.makerRelayerFee,
-            takerRelayerFee: sell.takerRelayerFee,
-            makerProtocolFee: sell.makerProtocolFee,
-            takerProtocolFee: sell.takerProtocolFee,
-            feeRecipient: sell.feeRecipient,
-            feeMethod: sell.feeMethod,
-            side: sell.side,
-            saleKind: sell.saleKind,
-            target: sell.target,
-            howToCall: sell.howToCall,
-            calldatas: sell.calldata,
-            replacementPattern: sell.replacementPattern,
-            staticTarget: sell.staticTarget,
-            staticExtradata: sell.staticExtradata,
-            paymentToken: sell.paymentToken,
-            basePrice: sell.basePrice,
-            extra: sell.extra,
-            listingTime: sell.listingTime,
-            expirationTime: sell.expirationTime,
-            salt: sell.salt,
-            dataType: sell.dataType,
-            data: sell.data
-          },
-    ).callAsync({from: accountAddress})
+    let result
+    if( isOrderV1 ) {
+        result = await client.wyvernExchangeV1.ordersCanMatch(
+            {
+                exchange: buy.exchange,
+                maker: buy.maker,
+                taker: buy.taker,
+                makerRelayerFee: buy.makerRelayerFee,
+                takerRelayerFee: buy.takerRelayerFee,
+                makerProtocolFee: buy.makerProtocolFee,
+                takerProtocolFee: buy.takerProtocolFee,
+                feeRecipient: buy.feeRecipient,
+                feeMethod: buy.feeMethod,
+                side: buy.side,
+                saleKind: buy.saleKind,
+                target: buy.target,
+                howToCall: buy.howToCall,
+                calldatas: buy.calldata,
+                replacementPattern: buy.replacementPattern,
+                staticTarget: buy.staticTarget,
+                staticExtradata: buy.staticExtradata,
+                paymentToken: buy.paymentToken,
+                basePrice: buy.basePrice,
+                extra: buy.extra,
+                listingTime: buy.listingTime,
+                expirationTime: buy.expirationTime,
+                salt: buy.salt,
+                dataType: buy.dataType,
+                data: buy.data
+            },
+            {
+                exchange: sell.exchange,
+                maker: sell.maker,
+                taker: sell.taker,
+                makerRelayerFee: sell.makerRelayerFee,
+                takerRelayerFee: sell.takerRelayerFee,
+                makerProtocolFee: sell.makerProtocolFee,
+                takerProtocolFee: sell.takerProtocolFee,
+                feeRecipient: sell.feeRecipient,
+                feeMethod: sell.feeMethod,
+                side: sell.side,
+                saleKind: sell.saleKind,
+                target: sell.target,
+                howToCall: sell.howToCall,
+                calldatas: sell.calldata,
+                replacementPattern: sell.replacementPattern,
+                staticTarget: sell.staticTarget,
+                staticExtradata: sell.staticExtradata,
+                paymentToken: sell.paymentToken,
+                basePrice: sell.basePrice,
+                extra: sell.extra,
+                listingTime: sell.listingTime,
+                expirationTime: sell.expirationTime,
+                salt: sell.salt,
+                dataType: sell.dataType,
+                data: sell.data
+            },
+        ).callAsync({from: accountAddress})
+    } else {
+        result = await client.wyvernExchange.ordersCanMatch_(
+            [buy.exchange, buy.maker, buy.taker, buy.feeRecipient, buy.target, buy.staticTarget, buy.paymentToken, sell.exchange, sell.maker, sell.taker, sell.feeRecipient, sell.target, sell.staticTarget, sell.paymentToken],
+            [buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt],
+            [buy.feeMethod, buy.side, buy.saleKind, buy.howToCall, sell.feeMethod, sell.side, sell.saleKind, sell.howToCall],
+            buy.calldata,
+            sell.calldata,
+            buy.replacementPattern,
+            sell.replacementPattern,
+            buy.staticExtradata,
+            sell.staticExtradata
+        ).callAsync({from: accountAddress})
+    }
 
     if (result) {
         return

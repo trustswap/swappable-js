@@ -82,7 +82,15 @@ import {
   STATIC_CALL_TX_ORIGIN_MATIC_ADDRESS,
   STATIC_CALL_TX_ORIGIN_MUMBAI_ADDRESS,
   SWAP_TOKEN_ADDRESS_MATIC_MAINNET,
-  SWAP_TOKEN_ADDRESS_MATIC_MUMBAI
+  SWAP_TOKEN_ADDRESS_MATIC_MUMBAI,
+  WYVERN_EXCHANGE_ADDRESS_MAINNET,
+  WYVERN_EXCHANGE_ADDRESS_MAINNET_V1,
+  WYVERN_EXCHANGE_ADDRESS_RINKEBY,
+  WYVERN_EXCHANGE_ADDRESS_RINKEBY_V1,
+  WYVERN_EXCHANGE_ADDRESS_MATIC,
+  WYVERN_EXCHANGE_ADDRESS_MATIC_V1,
+  WYVERN_EXCHANGE_ADDRESS_MUMBAI,
+  WYVERN_EXCHANGE_ADDRESS_MUMBAI_V1
 } from './constants'
 
 export class SwappablePort {
@@ -963,7 +971,11 @@ export class SwappablePort {
     this._dispatch(EventType.CancelOrder, { order, accountAddress })
 
     const gasPrice:any = await this._computeGasPrice()
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder(
+    
+    let transactionHash = ""
+
+    if ( this._isOrderV1(order.exchange) ) {
+      transactionHash = await this._wyvernProtocol.wyvernExchangeV1.cancelOrder(
       {
         exchange: order.exchange,
         maker: order.maker,
@@ -995,8 +1007,24 @@ export class SwappablePort {
         v: order.v || 0,
         r: order.r || NULL_BLOCK_HASH,
         s: order.s || NULL_BLOCK_HASH
-      }).sendTransactionAsync(
-      { from: accountAddress, gasPrice })
+      }).sendTransactionAsync({ from: accountAddress, gasPrice })
+    } else {
+      transactionHash = await this._wyvernProtocol.wyvernExchange.cancelOrder_(
+        [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+        [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+        order.feeMethod,
+        order.side,
+        order.saleKind,
+        order.howToCall,
+        order.calldata,
+        order.replacementPattern,
+        order.staticExtradata,
+        order.v || 0,
+        order.r || NULL_BLOCK_HASH,
+        order.s || NULL_BLOCK_HASH
+      )
+      .sendTransactionAsync({ from: accountAddress, gasPrice })
+    }
 
     await this._confirmTransaction(transactionHash.toString(), EventType.CancelOrder, "Cancelling order", async () => {
       const isOpen = await this._validateOrder(order)
@@ -1283,36 +1311,49 @@ export class SwappablePort {
    */
   public async getCurrentPrice(order: Order) {
 
-    const currentPrice = await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice(
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      }
-    ).callAsync()
-    return currentPrice
+    if ( this._isOrderV1(order.exchange) ) {
+      return await this._wyvernProtocolReadOnly.wyvernExchangeV1.calculateCurrentPrice(
+        {
+          exchange: order.exchange,
+          maker: order.maker,
+          taker: order.taker,
+          makerRelayerFee: order.makerRelayerFee,
+          takerRelayerFee: order.takerRelayerFee,
+          makerProtocolFee: order.makerProtocolFee,
+          takerProtocolFee: order.takerProtocolFee,
+          feeRecipient: order.feeRecipient,
+          feeMethod: order.feeMethod,
+          side: order.side,
+          saleKind: order.saleKind,
+          target: order.target,
+          howToCall: order.howToCall,
+          calldatas: order.calldata,
+          replacementPattern: order.replacementPattern,
+          staticTarget: order.staticTarget,
+          staticExtradata: order.staticExtradata,
+          paymentToken: order.paymentToken,
+          basePrice: order.basePrice,
+          extra: order.extra,
+          listingTime: order.listingTime,
+          expirationTime: order.expirationTime,
+          salt: order.salt,
+          dataType: order.dataType,
+          data: order.data
+        }
+      ).callAsync()
+    } else {
+        return await this._wyvernProtocolReadOnly.wyvernExchange.calculateCurrentPrice_(
+          [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata,
+        ).callAsync()
+    }
   }
 
   /**
@@ -1767,35 +1808,49 @@ export class SwappablePort {
    * @returns The order as stored by the orderbook
    */
   public async validateAndPostOrder(order: Order): Promise<Order> {
-    const hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder(
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      }
-    ).callAsync()
+    let hash
+    if( this._isOrderV1(order.exchange) ) {
+      hash = await this._wyvernProtocolReadOnly.wyvernExchangeV1.hashOrder(
+        {
+          exchange: order.exchange,
+          maker: order.maker,
+          taker: order.taker,
+          makerRelayerFee: order.makerRelayerFee,
+          takerRelayerFee: order.takerRelayerFee,
+          makerProtocolFee: order.makerProtocolFee,
+          takerProtocolFee: order.takerProtocolFee,
+          feeRecipient: order.feeRecipient,
+          feeMethod: order.feeMethod,
+          side: order.side,
+          saleKind: order.saleKind,
+          target: order.target,
+          howToCall: order.howToCall,
+          calldatas: order.calldata,
+          replacementPattern: order.replacementPattern,
+          staticTarget: order.staticTarget,
+          staticExtradata: order.staticExtradata,
+          paymentToken: order.paymentToken,
+          basePrice: order.basePrice,
+          extra: order.extra,
+          listingTime: order.listingTime,
+          expirationTime: order.expirationTime,
+          salt: order.salt,
+          dataType: order.dataType,
+          data: order.data
+        }
+      ).callAsync()
+    } else {
+        hash = await this._wyvernProtocolReadOnly.wyvernExchange.hashOrder_(
+          [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata).callAsync()
+    }
 
     if (hash !== order.hash) {
       console.error(order)
@@ -1850,75 +1905,105 @@ export class SwappablePort {
       value = await this._getRequiredAmountForTakingSellOrder(sell)
     }
 
+    const doesExchangeAddressMatch = (buy.exchange.toLowerCase() === sell.exchange.toLowerCase())
+    if (!doesExchangeAddressMatch) {
+      throw new Error('Buy and Sell orders exchange mismatch')
+    }
+
     try {
-      return await this._getClientsForRead(retries).wyvernProtocol.wyvernExchange.atomicMatch(
-        {
-          exchange: buy.exchange,
-          maker: buy.maker,
-          taker: buy.taker,
-          makerRelayerFee: buy.makerRelayerFee,
-          takerRelayerFee: buy.takerRelayerFee,
-          makerProtocolFee: buy.makerProtocolFee,
-          takerProtocolFee: buy.takerProtocolFee,
-          feeRecipient: buy.feeRecipient,
-          feeMethod: buy.feeMethod,
-          side: buy.side,
-          saleKind: buy.saleKind,
-          target: buy.target,
-          howToCall: buy.howToCall,
-          calldatas: buy.calldata,
-          replacementPattern: buy.replacementPattern,
-          staticTarget: buy.staticTarget,
-          staticExtradata: buy.staticExtradata,
-          paymentToken: buy.paymentToken,
-          basePrice: buy.basePrice,
-          extra: buy.extra,
-          listingTime: buy.listingTime,
-          expirationTime: buy.expirationTime,
-          salt: buy.salt,
-          dataType: buy.dataType,
-          data: buy.data
-        },
-        {
-          v: buy.v || 0,
-          r: buy.r || NULL_BLOCK_HASH,
-          s: buy.s || NULL_BLOCK_HASH,
-        },
-        {
-          exchange: sell.exchange,
-          maker: sell.maker,
-          taker: sell.taker,
-          makerRelayerFee: sell.makerRelayerFee,
-          takerRelayerFee: sell.takerRelayerFee,
-          makerProtocolFee: sell.makerProtocolFee,
-          takerProtocolFee: sell.takerProtocolFee,
-          feeRecipient: sell.feeRecipient,
-          feeMethod: sell.feeMethod,
-          side: sell.side,
-          saleKind: sell.saleKind,
-          target: sell.target,
-          howToCall: sell.howToCall,
-          calldatas: sell.calldata,
-          replacementPattern: sell.replacementPattern,
-          staticTarget: sell.staticTarget,
-          staticExtradata: sell.staticExtradata,
-          paymentToken: sell.paymentToken,
-          basePrice: sell.basePrice,
-          extra: sell.extra,
-          listingTime: sell.listingTime,
-          expirationTime: sell.expirationTime,
-          salt: sell.salt,
-          dataType: sell.dataType,
-          data: sell.data
-        },
-        {
-          v: sell.v || 0,
-          r: sell.r || NULL_BLOCK_HASH,
-          s: sell.s || NULL_BLOCK_HASH,
-        },
-        metadata)
-        // Typescript error in estimate gas method, so use any
-        .estimateGasAsync({ from: accountAddress, value } as any)
+      if( this._isOrderV1(buy.exchange) ) {
+        return await this._getClientsForRead(retries).wyvernProtocol.wyvernExchangeV1.atomicMatch(
+          {
+            exchange: buy.exchange,
+            maker: buy.maker,
+            taker: buy.taker,
+            makerRelayerFee: buy.makerRelayerFee,
+            takerRelayerFee: buy.takerRelayerFee,
+            makerProtocolFee: buy.makerProtocolFee,
+            takerProtocolFee: buy.takerProtocolFee,
+            feeRecipient: buy.feeRecipient,
+            feeMethod: buy.feeMethod,
+            side: buy.side,
+            saleKind: buy.saleKind,
+            target: buy.target,
+            howToCall: buy.howToCall,
+            calldatas: buy.calldata,
+            replacementPattern: buy.replacementPattern,
+            staticTarget: buy.staticTarget,
+            staticExtradata: buy.staticExtradata,
+            paymentToken: buy.paymentToken,
+            basePrice: buy.basePrice,
+            extra: buy.extra,
+            listingTime: buy.listingTime,
+            expirationTime: buy.expirationTime,
+            salt: buy.salt,
+            dataType: buy.dataType,
+            data: buy.data
+          },
+          {
+            v: buy.v || 0,
+            r: buy.r || NULL_BLOCK_HASH,
+            s: buy.s || NULL_BLOCK_HASH,
+          },
+          {
+            exchange: sell.exchange,
+            maker: sell.maker,
+            taker: sell.taker,
+            makerRelayerFee: sell.makerRelayerFee,
+            takerRelayerFee: sell.takerRelayerFee,
+            makerProtocolFee: sell.makerProtocolFee,
+            takerProtocolFee: sell.takerProtocolFee,
+            feeRecipient: sell.feeRecipient,
+            feeMethod: sell.feeMethod,
+            side: sell.side,
+            saleKind: sell.saleKind,
+            target: sell.target,
+            howToCall: sell.howToCall,
+            calldatas: sell.calldata,
+            replacementPattern: sell.replacementPattern,
+            staticTarget: sell.staticTarget,
+            staticExtradata: sell.staticExtradata,
+            paymentToken: sell.paymentToken,
+            basePrice: sell.basePrice,
+            extra: sell.extra,
+            listingTime: sell.listingTime,
+            expirationTime: sell.expirationTime,
+            salt: sell.salt,
+            dataType: sell.dataType,
+            data: sell.data
+          },
+          {
+            v: sell.v || 0,
+            r: sell.r || NULL_BLOCK_HASH,
+            s: sell.s || NULL_BLOCK_HASH,
+          },
+          metadata)
+          // Typescript error in estimate gas method, so use any
+          .estimateGasAsync({ from: accountAddress, value } as any)
+      } else {
+          return await this._getClientsForRead(retries).wyvernProtocol.wyvernExchange.atomicMatch_(
+            [buy.exchange, buy.maker, buy.taker, buy.feeRecipient, buy.target, buy.staticTarget, buy.paymentToken, sell.exchange, sell.maker, sell.taker, sell.feeRecipient, sell.target, sell.staticTarget, sell.paymentToken],
+            [buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt],
+            [buy.feeMethod, buy.side, buy.saleKind, buy.howToCall, sell.feeMethod, sell.side, sell.saleKind, sell.howToCall],
+            buy.calldata,
+            sell.calldata,
+            buy.replacementPattern,
+            sell.replacementPattern,
+            buy.staticExtradata,
+            sell.staticExtradata,
+            [
+              buy.v || 0,
+              sell.v || 0
+            ],
+            [
+              buy.r || NULL_BLOCK_HASH,
+              buy.s || NULL_BLOCK_HASH,
+              sell.r || NULL_BLOCK_HASH,
+              sell.s || NULL_BLOCK_HASH,
+              metadata
+            ])
+            .estimateGasAsync({ from: accountAddress, value } as any)
+      }
     } catch (error) {
 
       if (retries <= 0) {
@@ -2575,13 +2660,7 @@ export class SwappablePort {
     console.log("🚀 ~ file: seaport.ts ~ line 2382 ~ SwappablePort ~ feeRecipient", feeRecipient)
     console.log("🚀 ~ file: seaport.ts ~ line 2421 ~ SwappablePort ~ devPayoutAddress", devPayoutAddress)
 
-    const [ dataType, data ] = WyvernProtocol.encodeOrderData({
-      dataType: "ORDER_DATA_TYPE_V1",
-      payouts: order.side == OrderSide.Sell ? [] : payouts,
-      originFees: []
-    });
-
-    const matchingOrder: UnhashedOrder = {
+    let matchingOrder: UnhashedOrder = {
       exchange: order.exchange,
       maker: accountAddress,
       taker: order.maker,
@@ -2609,8 +2688,22 @@ export class SwappablePort {
       expirationTime: times.expirationTime,
       salt: WyvernProtocol.generatePseudoRandomSalt(),
       metadata: order.metadata,
-      dataType: order.side == OrderSide.Sell ? order.dataType : dataType,
-      data: order.side == OrderSide.Sell ? order.data : data
+      dataType: '0x',
+      data: '0x'
+    }
+
+    if( this._isOrderV1(order.exchange) ) {
+      const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+        dataType: "ORDER_DATA_TYPE_V1",
+        payouts: order.side == OrderSide.Sell ? [] : payouts,
+        originFees: []
+      });
+
+      matchingOrder = {
+        ...matchingOrder,
+        dataType: order.side == OrderSide.Sell ? order.dataType : dataType,
+        data: order.side == OrderSide.Sell ? order.data : data
+      }
     }
 
     return {
@@ -2658,7 +2751,12 @@ export class SwappablePort {
         }
       }
 
-      const canMatch = await requireOrdersCanMatch(this._getClientsForRead(retries).wyvernProtocol, { buy, sell, accountAddress })
+      const doesExchangeAddressMatch = (buy.exchange.toLowerCase() === sell.exchange.toLowerCase())
+      if (!doesExchangeAddressMatch) {
+        throw new Error('Buy and Sell orders exchange mismatch')
+      }
+
+      const canMatch = await requireOrdersCanMatch(this._getClientsForRead(retries).wyvernProtocol, { buy, sell, accountAddress }, this._isOrderV1(buy.exchange))
       this.logger(`Orders matching: ${canMatch}`)
 
       const calldataCanMatch = await requireOrderCalldataCanMatch(this._getClientsForRead(retries).wyvernProtocol, { buy, sell })
@@ -2720,36 +2818,52 @@ export class SwappablePort {
       await this.approveFungibleToken({ accountAddress, tokenAddress, minimumAmount })
     }
 
+    let sellValid = false
+
     // Check sell parameters
-    const sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters(
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      })
-      .callAsync({ from: accountAddress })
+    if( this._isOrderV1(order.exchange) ) {
+      sellValid = await this._wyvernProtocolReadOnly.wyvernExchangeV1.validateOrderParameters(
+        {
+          exchange: order.exchange,
+          maker: order.maker,
+          taker: order.taker,
+          makerRelayerFee: order.makerRelayerFee,
+          takerRelayerFee: order.takerRelayerFee,
+          makerProtocolFee: order.makerProtocolFee,
+          takerProtocolFee: order.takerProtocolFee,
+          feeRecipient: order.feeRecipient,
+          feeMethod: order.feeMethod,
+          side: order.side,
+          saleKind: order.saleKind,
+          target: order.target,
+          howToCall: order.howToCall,
+          calldatas: order.calldata,
+          replacementPattern: order.replacementPattern,
+          staticTarget: order.staticTarget,
+          staticExtradata: order.staticExtradata,
+          paymentToken: order.paymentToken,
+          basePrice: order.basePrice,
+          extra: order.extra,
+          listingTime: order.listingTime,
+          expirationTime: order.expirationTime,
+          salt: order.salt,
+          dataType: order.dataType,
+          data: order.data
+        })
+        .callAsync({ from: accountAddress })
+    } else {
+        sellValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters_([order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata
+        )
+        .callAsync({ from: accountAddress })
+    }
     if (!sellValid) {
       console.error(order)
       throw new Error(`Failed to validate sell order parameters. Make sure you're on the right network!`)
@@ -2769,8 +2883,67 @@ export class SwappablePort {
 
     this._dispatch(EventType.ApproveOrder, { order, accountAddress })
 
-    const transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder(
-      {
+    let transactionHash = ""
+    if( this._isOrderV1(order.exchange) ) {
+      transactionHash = await this._wyvernProtocol.wyvernExchangeV1.approveOrder(
+        {
+          exchange: order.exchange,
+          maker: order.maker,
+          taker: order.taker,
+          makerRelayerFee: order.makerRelayerFee,
+          takerRelayerFee: order.takerRelayerFee,
+          makerProtocolFee: order.makerProtocolFee,
+          takerProtocolFee: order.takerProtocolFee,
+          feeRecipient: order.feeRecipient,
+          feeMethod: order.feeMethod,
+          side: order.side,
+          saleKind: order.saleKind,
+          target: order.target,
+          howToCall: order.howToCall,
+          calldatas: order.calldata,
+          replacementPattern: order.replacementPattern,
+          staticTarget: order.staticTarget,
+          staticExtradata: order.staticExtradata,
+          paymentToken: order.paymentToken,
+          basePrice: order.basePrice,
+          extra: order.extra,
+          listingTime: order.listingTime,
+          expirationTime: order.expirationTime,
+          salt: order.salt,
+          dataType: order.dataType,
+          data: order.data
+        },
+        includeInOrderBook
+      ).sendTransactionAsync({ from: accountAddress, gasPrice })
+    } else {
+        transactionHash = await this._wyvernProtocol.wyvernExchange.approveOrder_(
+          [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata,
+          includeInOrderBook
+        ).sendTransactionAsync({ from: accountAddress, gasPrice })
+    }
+
+    await this._confirmTransaction(transactionHash.toString(), EventType.ApproveOrder, "Approving order", async () => {
+      const isApproved = await this._validateOrder(order)
+      return isApproved
+    })
+
+    return transactionHash
+  }
+
+  public async _validateOrder(order: Order): Promise<boolean> {
+
+    let isValid = false
+    
+    if( this._isOrderV1(order.exchange) ) {
+      const orderToValidate = {
         exchange: order.exchange,
         maker: order.maker,
         taker: order.taker,
@@ -2796,61 +2969,36 @@ export class SwappablePort {
         salt: order.salt,
         dataType: order.dataType,
         data: order.data
-      },
-      includeInOrderBook)
-      .sendTransactionAsync({ from: accountAddress, gasPrice })
+      }
 
-    await this._confirmTransaction(transactionHash.toString(), EventType.ApproveOrder, "Approving order", async () => {
-      const isApproved = await this._validateOrder(order)
-      return isApproved
-    })
+      const orderSig = {
+        v: order.v || 0,
+        r: order.r || NULL_BLOCK_HASH,
+        s: order.s || NULL_BLOCK_HASH
+      }
 
-    return transactionHash
-  }
-
-  public async _validateOrder(order: Order): Promise<boolean> {
-
-    const orderToValidate = {
-      exchange: order.exchange,
-      maker: order.maker,
-      taker: order.taker,
-      makerRelayerFee: order.makerRelayerFee,
-      takerRelayerFee: order.takerRelayerFee,
-      makerProtocolFee: order.makerProtocolFee,
-      takerProtocolFee: order.takerProtocolFee,
-      feeRecipient: order.feeRecipient,
-      feeMethod: order.feeMethod,
-      side: order.side,
-      saleKind: order.saleKind,
-      target: order.target,
-      howToCall: order.howToCall,
-      calldatas: order.calldata,
-      replacementPattern: order.replacementPattern,
-      staticTarget: order.staticTarget,
-      staticExtradata: order.staticExtradata,
-      paymentToken: order.paymentToken,
-      basePrice: order.basePrice,
-      extra: order.extra,
-      listingTime: order.listingTime,
-      expirationTime: order.expirationTime,
-      salt: order.salt,
-      dataType: order.dataType,
-      data: order.data
+      const orderHash = await this._wyvernProtocolReadOnly.wyvernExchangeV1.hashToSign(orderToValidate).callAsync()
+      isValid = await this._wyvernProtocolReadOnly.wyvernExchangeV1.validateOrder(
+        orderHash,
+        orderToValidate,
+        orderSig
+      ).callAsync()
+    } else {
+        isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder_(
+          [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata,
+          order.v || 0,
+          order.r || NULL_BLOCK_HASH,
+          order.s || NULL_BLOCK_HASH
+        ).callAsync()
     }
-
-    const orderSig = {
-      v: order.v || 0,
-      r: order.r || NULL_BLOCK_HASH,
-      s: order.s || NULL_BLOCK_HASH
-    }
-
-    const orderHash = await this._wyvernProtocolReadOnly.wyvernExchange.hashToSign(orderToValidate).callAsync()
-    const isValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrder(
-      orderHash,
-      orderToValidate,
-      orderSig
-    ).callAsync()
-
     return isValid
   }
 
@@ -2966,36 +3114,52 @@ export class SwappablePort {
       await this.approveFungibleToken({ accountAddress, tokenAddress, minimumAmount })
     }
 
-    // Check order formation
-    const buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters(
-      {
-        exchange: order.exchange,
-        maker: order.maker,
-        taker: order.taker,
-        makerRelayerFee: order.makerRelayerFee,
-        takerRelayerFee: order.takerRelayerFee,
-        makerProtocolFee: order.makerProtocolFee,
-        takerProtocolFee: order.takerProtocolFee,
-        feeRecipient: order.feeRecipient,
-        feeMethod: order.feeMethod,
-        side: order.side,
-        saleKind: order.saleKind,
-        target: order.target,
-        howToCall: order.howToCall,
-        calldatas: order.calldata,
-        replacementPattern: order.replacementPattern,
-        staticTarget: order.staticTarget,
-        staticExtradata: order.staticExtradata,
-        paymentToken: order.paymentToken,
-        basePrice: order.basePrice,
-        extra: order.extra,
-        listingTime: order.listingTime,
-        expirationTime: order.expirationTime,
-        salt: order.salt,
-        dataType: order.dataType,
-        data: order.data
-      }
-    ).callAsync({ from: accountAddress })
+    let buyValid = false
+
+    if( this._isOrderV1(order.exchange) ) {
+      // Check order formation
+      buyValid = await this._wyvernProtocolReadOnly.wyvernExchangeV1.validateOrderParameters(
+        {
+          exchange: order.exchange,
+          maker: order.maker,
+          taker: order.taker,
+          makerRelayerFee: order.makerRelayerFee,
+          takerRelayerFee: order.takerRelayerFee,
+          makerProtocolFee: order.makerProtocolFee,
+          takerProtocolFee: order.takerProtocolFee,
+          feeRecipient: order.feeRecipient,
+          feeMethod: order.feeMethod,
+          side: order.side,
+          saleKind: order.saleKind,
+          target: order.target,
+          howToCall: order.howToCall,
+          calldatas: order.calldata,
+          replacementPattern: order.replacementPattern,
+          staticTarget: order.staticTarget,
+          staticExtradata: order.staticExtradata,
+          paymentToken: order.paymentToken,
+          basePrice: order.basePrice,
+          extra: order.extra,
+          listingTime: order.listingTime,
+          expirationTime: order.expirationTime,
+          salt: order.salt,
+          dataType: order.dataType,
+          data: order.data
+        }
+      ).callAsync({ from: accountAddress })
+    } else {
+        buyValid = await this._wyvernProtocolReadOnly.wyvernExchange.validateOrderParameters_([order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
+          [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+          order.feeMethod,
+          order.side,
+          order.saleKind,
+          order.howToCall,
+          order.calldata,
+          order.replacementPattern,
+          order.staticExtradata
+        ).callAsync({ from: accountAddress })
+    }
+    
     if (!buyValid) {
       console.error(order)
       throw new Error(`Failed to validate buy order parameters. Make sure you're on the right network!`)
@@ -3298,6 +3462,11 @@ export class SwappablePort {
 
     await this._validateMatch({ buy, sell, accountAddress, shouldValidateBuy, shouldValidateSell })
 
+    const doesExchangeAddressMatch = (buy.exchange.toLowerCase() === sell.exchange.toLowerCase())
+    if (!doesExchangeAddressMatch) {
+      throw new Error('Buy and Sell orders exchange mismatch')
+    }
+
     this._dispatch(EventType.MatchOrders, { buy, sell, accountAddress, matchMetadata: metadata })
 
     let txHash
@@ -3371,16 +3540,44 @@ export class SwappablePort {
       s: sell.s || NULL_BLOCK_HASH,
     }
     
+    const args: WyvernAtomicMatchParameters = [
+      [buy.exchange, buy.maker, buy.taker, buy.feeRecipient, buy.target,
+      buy.staticTarget, buy.paymentToken, sell.exchange, sell.maker, sell.taker, sell.feeRecipient, sell.target, sell.staticTarget, sell.paymentToken],
+      [buy.makerRelayerFee, buy.takerRelayerFee, buy.makerProtocolFee, buy.takerProtocolFee, buy.basePrice, buy.extra, buy.listingTime, buy.expirationTime, buy.salt, sell.makerRelayerFee, sell.takerRelayerFee, sell.makerProtocolFee, sell.takerProtocolFee, sell.basePrice, sell.extra, sell.listingTime, sell.expirationTime, sell.salt],
+      [buy.feeMethod, buy.side, buy.saleKind, buy.howToCall, sell.feeMethod, sell.side, sell.saleKind, sell.howToCall],
+      buy.calldata,
+      sell.calldata,
+      buy.replacementPattern,
+      sell.replacementPattern,
+      buy.staticExtradata,
+      sell.staticExtradata,
+      [
+        buy.v || 0,
+        sell.v || 0
+      ],
+      [
+        buy.r || NULL_BLOCK_HASH,
+        buy.s || NULL_BLOCK_HASH,
+        sell.r || NULL_BLOCK_HASH,
+        sell.s || NULL_BLOCK_HASH,
+        metadata
+      ]
+    ]
+    
     // Estimate gas first
     try {
-      // Typescript splat doesn't typecheck
-      const gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchange.atomicMatch(
-        buyOrder,
-        buySig,
-        sellOrder,
-        sellSig,
-        metadata)
-        .estimateGasAsync(txnData)
+      let gasEstimate
+      if( this._isOrderV1(buyOrder.exchange) ) {
+        gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchangeV1.atomicMatch(
+          buyOrder,
+          buySig,
+          sellOrder,
+          sellSig,
+          metadata
+        ).estimateGasAsync(txnData)
+      } else {
+          gasEstimate = await this._wyvernProtocolReadOnly.wyvernExchange.atomicMatch_(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]).estimateGasAsync(txnData)
+      }
 
       txnData.gasPrice = await this._computeGasPrice()
       txnData.gas = this._correctGasAmount(gasEstimate)
@@ -3393,13 +3590,17 @@ export class SwappablePort {
     // Then do the transaction
     try {
       this.logger(`Fulfilling order with gas set to ${txnData.gas}`)
-      txHash = await this._wyvernProtocol.wyvernExchange.atomicMatch(
-        buyOrder,
-        buySig,
-        sellOrder,
-        sellSig,
-        metadata)
-        .sendTransactionAsync(txnData)
+      if( this._isOrderV1(buyOrder.exchange) ) {
+        txHash = await this._wyvernProtocol.wyvernExchangeV1.atomicMatch(
+          buyOrder,
+          buySig,
+          sellOrder,
+          sellSig,
+          metadata)
+          .sendTransactionAsync(txnData)
+      } else {
+          txHash = await this._wyvernProtocol.wyvernExchange.atomicMatch_(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]).sendTransactionAsync(txnData)
+      }
     } catch (error) {
       console.error(error)
 
@@ -3557,4 +3758,22 @@ export class SwappablePort {
     )
     return decodedData.payouts
   }
+
+  private _getWyvernExchangeAddress(version: string) {
+    switch (this._networkName) {
+      case Network.Main:
+        return version == "V1" ? WYVERN_EXCHANGE_ADDRESS_MAINNET_V1 : WYVERN_EXCHANGE_ADDRESS_MAINNET
+      case Network.Rinkeby:
+        return version == "V1" ? WYVERN_EXCHANGE_ADDRESS_RINKEBY_V1 : WYVERN_EXCHANGE_ADDRESS_RINKEBY
+      case Network.Matic:
+        return version == "V1" ? WYVERN_EXCHANGE_ADDRESS_MATIC_V1 : WYVERN_EXCHANGE_ADDRESS_MATIC
+      case Network.Mumbai:
+        return version == "V1" ? WYVERN_EXCHANGE_ADDRESS_MUMBAI_V1 : WYVERN_EXCHANGE_ADDRESS_MUMBAI
+    }
+  }
+
+  private _isOrderV1(orderExchangeAddress: string): Boolean {
+    return orderExchangeAddress.toLowerCase() === this._getWyvernExchangeAddress("V1").toLowerCase()
+  }
+
 }

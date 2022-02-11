@@ -785,4 +785,6 @@ export declare class SwappablePort {
     private _confirmTransaction;
     private _pollCallbackForConfirmation;
     decodeOrderData(dataType: string, data: string): Array<Part>;
+    private _getWyvernExchangeAddress;
+    private _isOrderV1;
 }
