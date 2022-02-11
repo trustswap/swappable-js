@@ -3549,4 +3549,12 @@ export class SwappablePort {
       return testResolve(initialRetries)
     })
   }
+
+  public decodeOrderData(dataType: string, data: string): Array<Part> {
+    const decodedData = WyvernProtocol.decodeOrderData(
+      dataType,
+      data
+    )
+    return decodedData.payouts
+  }
 }

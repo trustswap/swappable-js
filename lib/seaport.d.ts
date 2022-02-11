@@ -784,4 +784,5 @@ export declare class SwappablePort {
     private _getClientsForRead;
     private _confirmTransaction;
     private _pollCallbackForConfirmation;
+    decodeOrderData(dataType: string, data: string): Array<Part>;
 }
