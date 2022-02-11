@@ -2291,7 +2291,7 @@ export class SwappablePort {
     });
 
     return {
-      exchange: WyvernProtocol.getExchangeContractAddress(this._networkName),
+      exchange: WyvernProtocol.getExchangeV1ContractAddress(this._networkName),
       maker: accountAddress,
       taker: buyerAddress,
       quantity: quantityBN,
