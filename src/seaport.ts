@@ -2187,7 +2187,7 @@ export class SwappablePort {
 
     const { staticTarget, staticExtradata } = await this._getStaticCallTargetAndExtraData({ asset: swappableAsset, useTxnOriginStaticCall: false })
 
-    return {
+    let buyOrder = {
       exchange: sellOrder ? sellOrder.exchange : WyvernProtocol.getExchangeV1ContractAddress(this._networkName),
       maker: accountAddress,
       taker,
@@ -2222,6 +2222,22 @@ export class SwappablePort {
       dataType: '0x',
       data: '0x'
     }
+
+    if( !sellOrder || ( sellOrder && this._isOrderV1(sellOrder.exchange))) {
+      const [ dataType, data ] = WyvernProtocol.encodeOrderData({
+        dataType: "ORDER_DATA_TYPE_V1",
+        payouts: [],
+        originFees: []
+      });
+
+      buyOrder = {
+        ...buyOrder,
+        dataType,
+        data
+      }
+    }
+
+    return buyOrder
   }
 
   public async _makeSellOrder(
