@@ -93,6 +93,8 @@ import {
   WYVERN_EXCHANGE_ADDRESS_MUMBAI_V1
 } from './constants'
 
+BigNumber.config({ EXPONENTIAL_AT: 1e+9 })
+
 export class SwappablePort {
 
   // Web3 instance to use
