@@ -5,9 +5,8 @@ export const DEFAULT_GAS_INCREASE_FACTOR = 1.01
 export const NULL_ADDRESS = WyvernProtocol.NULL_ADDRESS
 export const NULL_BLOCK_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 export const SWAPPABLE_FEE_RECIPIENT = '0x5869d1ee6d0917b786188547788566b25283ff6b'
-export const DEP_INFURA_KEY = '8fa63c06dabd4d2b8ae5d99ed5a100f8'
-export const MAINNET_PROVIDER_URL = 'https://mainnet.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
-export const RINKEBY_PROVIDER_URL = 'https://rinkeby.infura.io/v3/8fa63c06dabd4d2b8ae5d99ed5a100f8'
+export const MAINNET_PROVIDER_URL = 'https://eth-mainnet.alchemyapi.io/v2/UhIdZeuyVhTEg1nYiDAOP6BzmLUfsQiN'
+export const RINKEBY_PROVIDER_URL = 'https://eth-rinkeby.alchemyapi.io/v2/1cJ4XSOFnOqPLINygzqsygZiIYi4jaH_'
 
 export const MATIC_PROVIDER_URL = 'https://polygon-rpc.com/'
 export const MUMBAI_PROVIDER_URL = 'https://rpc-mumbai.maticvigil.com' // Matic Testnet
