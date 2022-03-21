@@ -35,7 +35,8 @@
   "author": "Swappable Developers",
   "license": "MIT",
   "dependencies": {
-    "bignumber.js": "^4.1.0",
+    "bignumber.js": "^9.0.2",
+    "ethereum-types": "^3.6.0",
     "ethereumjs-abi": "git+https://github.com/ProjectWyvern/ethereumjs-abi.git",
     "ethereumjs-util": "^5.2.0",
     "fbemitter": "^2.1.1",
@@ -45,7 +46,7 @@
     "query-string": "^6.11.1",
     "web3": "^0.20.6",
     "webpack": "^3.10.0",
-    "wyvern-js": "git+https://github.com/trustswap/wyvern-js.git#v1.1.0",
+    "wyvern-js": "git+https://github.com/trustswap/wyvern-js.git#master",
     "wyvern-schemas": "git+https://github.com/trustswap/wyvern-schemas.git#v0.12.0"
   },
   "husky": {

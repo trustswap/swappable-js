@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import * as Web3 from 'web3';
-import { Network, HowToCall, ECSignature, Order as WyvernOrder } from 'wyvern-js/lib/types';
+import { Network, HowToCall, ECSignature, Order as WyvernOrder, Part } from 'wyvern-js/lib/types';
 import { Token } from 'wyvern-schemas/dist/types';
-export { Network, HowToCall, ECSignature };
+export { Network, HowToCall, ECSignature, Part };
 /**
  * Events emitted by the SDK. There are five types:
  * 1. Transaction events, which tell you when a new transaction was
@@ -444,6 +444,8 @@ export interface OrderJSON extends Partial<ECSignature> {
     expirationTime: number | string;
     salt: string;
     metadata: ExchangeMetadata;
+    dataType: string;
+    data: string;
     hash: string;
 }
 /**

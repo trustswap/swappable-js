@@ -427,6 +427,9 @@ export const orderFromJSON = (order: any): Order => {
     paymentTokenContract: order.payment_token_contract ? tokenFromJSON(order.payment_token_contract) : undefined,
     asset: order.asset ? assetFromJSON(order.asset) : undefined,
     assetBundle: order.asset_bundle ? assetBundleFromJSON(order.asset_bundle) : undefined,
+
+    dataType: order.dataType,
+    data: order.data
   }
 
   // Use client-side price calc, to account for buyer fee (not added by server) and latency
@@ -476,6 +479,9 @@ export const orderToJSON = (order: Order): OrderJSON => {
     v: order.v,
     r: order.r,
     s: order.s,
+
+    dataType: order.dataType,
+    data: order.data,
 
     hash: order.hash
   }
@@ -635,7 +641,7 @@ export async function estimateGas(
  * @param web3 Web3 instance
  */
 export async function getCurrentGasPrice(web3: Web3): Promise<BigNumber> {
-  const meanGas = await promisify<BigNumber>(c => web3.eth.getGasPrice(c))
+  const meanGas = await promisify<BigNumber>(c => web3.eth.getGasPrice(c as any))
   return meanGas
 }
 
@@ -760,7 +766,7 @@ export function estimateCurrentPrice(order: Order, secondsToBacktrack = 30, shou
     exactPrice = exactPrice.times(+takerRelayerFee / INVERSE_BASIS_POINT + 1)
   }
 
-  return shouldRoundUp ? exactPrice.ceil() : exactPrice
+  return shouldRoundUp ? exactPrice.dp(0,2) : exactPrice
 }
 
 /**

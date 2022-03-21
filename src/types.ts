@@ -5,7 +5,8 @@ import {
   HowToCall,
   // Note: Wyvern SaleKind is wrong!
   ECSignature,
-  Order as WyvernOrder
+  Order as WyvernOrder,
+  Part
 } from 'wyvern-js/lib/types'
 
 import { Token } from 'wyvern-schemas/dist/types'
@@ -13,7 +14,8 @@ import { Token } from 'wyvern-schemas/dist/types'
 export {
   Network,
   HowToCall,
-  ECSignature
+  ECSignature,
+  Part
 }
 
 /**
@@ -635,6 +637,8 @@ export interface OrderJSON extends Partial<ECSignature> {
 
   metadata: ExchangeMetadata
 
+  dataType: string
+  data: string
   hash: string
 }
 

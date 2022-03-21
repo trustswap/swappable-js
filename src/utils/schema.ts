@@ -157,12 +157,12 @@ export function encodeAtomicizedTransfer(schemas: Array<Schema<WyvernAsset>>, as
     }
   })
 
-  const atomicizedCalldata = atomicizer.atomicize.getABIEncodedTransactionData(
+  const atomicizedCalldata = atomicizer.atomicize(
     transactions.map((t: any) => t.address),
     transactions.map((t: any) => t.value),
     transactions.map((t: any) => new BigNumber((t.calldata.length - 2) / 2)), // subtract 2 for '0x', divide by 2 for hex
     transactions.map((t: any) => t.calldata).reduce((x: string, current: string) => x + current.slice(2), '0x'), // cut off the '0x'
-  )
+  ).getABIEncodedTransactionData()
 
   return {
     calldata: atomicizedCalldata,
@@ -224,12 +224,12 @@ function encodeAtomicizedCalldata(atomicizer: WyvernAtomicizerContract, schemas:
       }
     })
 
-    const atomicizedCalldata = atomicizer.atomicize.getABIEncodedTransactionData(
+    const atomicizedCalldata = atomicizer.atomicize(
       transactions.map(t => t.address),
       transactions.map(t => t.value),
       transactions.map(t => new BigNumber((t.calldata.length - 2) / 2)), // subtract 2 for '0x', divide by 2 for hex
       transactions.map(t => t.calldata).reduce((x, y) => x + y.slice(2)), // cut off the '0x'
-    )
+    ).getABIEncodedTransactionData()
 
     const kind = side === OrderSide.Buy ? FunctionInputKind.Owner : undefined
 
